@@ -55,8 +55,8 @@ function Home() {
               A studied edit of footwear and ready-to-wear. Made in small batches by makers we know.
             </p>
             <div className="flex gap-3">
-              <Link to="/shop/women" className="bg-primary text-primary-foreground px-7 py-3 text-sm tracking-wider uppercase hover:bg-accent transition-colors">Shop Women</Link>
-              <Link to="/shop/men" className="border border-primary text-primary px-7 py-3 text-sm tracking-wider uppercase hover:bg-primary hover:text-primary-foreground transition-colors">Shop Men</Link>
+              <Link to="/shop/$gender" params={{ gender: "women" }} className="bg-primary text-primary-foreground px-7 py-3 text-sm tracking-wider uppercase hover:bg-accent transition-colors">Shop Women</Link>
+              <Link to="/shop/$gender" params={{ gender: "men" }} className="border border-primary text-primary px-7 py-3 text-sm tracking-wider uppercase hover:bg-primary hover:text-primary-foreground transition-colors">Shop Men</Link>
             </div>
           </motion.div>
         </div>
@@ -65,10 +65,10 @@ function Home() {
       {/* COLLECTIONS SPLIT */}
       <section className="mx-auto max-w-screen-2xl px-4 md:px-8 py-24 grid md:grid-cols-2 gap-6">
         {[
-          { to: "/shop/women", label: "Women", img: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1400&q=85" },
-          { to: "/shop/men", label: "Men", img: "https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?w=1400&q=85" },
+          { gender: "women" as const, label: "Women", img: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1400&q=85" },
+          { gender: "men" as const, label: "Men", img: "https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?w=1400&q=85" },
         ].map((c) => (
-          <Link key={c.to} to={c.to} className="group relative block aspect-[4/5] overflow-hidden bg-muted">
+          <Link key={c.gender} to="/shop/$gender" params={{ gender: c.gender }} className="group relative block aspect-[4/5] overflow-hidden bg-muted">
             <img src={c.img} alt={c.label} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
             <div className="absolute bottom-8 left-8">

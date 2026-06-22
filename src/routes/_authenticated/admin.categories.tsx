@@ -5,7 +5,8 @@ import { toast } from "sonner";
 import { slugify } from "@/lib/utils";
 import { AdminPage } from "@/components/admin/AdminShell";
 import { listAllCategories, upsertCategory, toggleCategoryActive } from "@/lib/categories.functions";
-import { ChevronRight, Folder, FolderOpen, Edit, Trash2, Eye, EyeOff } from "lucide-react";
+import { ChevronRight, Folder, FolderOpen, Edit, Trash2, Eye, EyeOff, Upload } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin/categories")({
   component: CategoriesAdmin,
@@ -231,7 +232,52 @@ function CategoriesAdmin() {
               </select>
             </div>
 
-            <Input label="Image URL" value={editing.image_url} onChange={(v) => setEditing({ ...editing, image_url: v })} />
+            <div>
+              <label className="editorial-eyebrow text-muted-foreground text-xs">Category Image</label>
+              <div className="flex gap-2 items-center mt-1">
+                <input
+                  type="text"
+                  placeholder="https://..."
+                  value={editing.image_url}
+                  onChange={(e) => setEditing({ ...editing, image_url: e.target.value })}
+                  className="flex-1 border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:border-accent"
+                />
+                <label className="bg-secondary border border-border hover:border-primary px-3 py-2 text-xs uppercase tracking-wider cursor-pointer flex items-center gap-1.5 shrink-0 select-none">
+                  <Upload className="h-3.5 w-3.5" />
+                  Upload
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      const toastId = toast.loading("Uploading image...");
+                      try {
+                        const fileExt = file.name.split(".").pop();
+                        const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
+                        const filePath = `categories/${fileName}`;
+                        
+                        const { error: uploadError } = await supabase.storage
+                          .from("images")
+                          .upload(filePath, file);
+
+                        if (uploadError) throw uploadError;
+
+                        const { data } = supabase.storage
+                          .from("images")
+                          .getPublicUrl(filePath);
+
+                        setEditing({ ...editing, image_url: data.publicUrl });
+                        toast.success("Image uploaded successfully", { id: toastId });
+                      } catch (err) {
+                        toast.error(err instanceof Error ? err.message : "Upload failed", { id: toastId });
+                      }
+                    }}
+                  />
+                </label>
+              </div>
+            </div>
             
             <div className="flex gap-2 justify-end pt-4 border-t border-border mt-6">
               <button onClick={() => setEditing(null)} className="px-4 py-2 text-sm uppercase tracking-wider hover:bg-secondary transition-colors">

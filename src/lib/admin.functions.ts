@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const getAdminOverview = createServerFn({ method: "GET" })
@@ -96,3 +97,57 @@ export const promoteSelfToAdmin = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+export const getAdminCustomer = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { data: adminCheck } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (!adminCheck) throw new Error("Forbidden");
+
+    const { data: profile, error: profileError } = await context.supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (profileError) throw new Error(profileError.message);
+    if (!profile) throw new Error("Customer not found");
+
+    const { data: orders, error: ordersError } = await context.supabase
+      .from("orders")
+      .select("id, status, total_amount, created_at")
+      .eq("user_id", data.id)
+      .order("created_at", { ascending: false });
+    if (ordersError) throw new Error(ordersError.message);
+
+    const orderCount = orders?.length ?? 0;
+    const totalSpent = (orders ?? [])
+      .filter((o) => o.status !== "cancelled")
+      .reduce((sum, o) => sum + Number(o.total_amount), 0);
+
+    let email: string | null = null;
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(data.id);
+      if (authUser?.user) {
+        email = authUser.user.email ?? null;
+      }
+    } catch (e) {
+      console.error("Failed to fetch email from admin auth", e);
+    }
+
+    return {
+      profile: {
+        ...profile,
+        email,
+      },
+      orders: orders ?? [],
+      metrics: {
+        orderCount,
+        totalSpent,
+      }
+    };
+  });

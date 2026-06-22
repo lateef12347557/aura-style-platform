@@ -72,7 +72,7 @@ export function ShopGrid({
 
   function updateParams(newParams: Record<string, any>) {
     navigate({
-      search: (prev: any) => {
+      search: ((prev: any) => {
         const next = { ...prev, ...newParams };
         // Clean up empty params
         Object.keys(next).forEach((key) => {
@@ -81,7 +81,7 @@ export function ShopGrid({
           }
         });
         return next;
-      },
+      }) as any,
     });
   }
 

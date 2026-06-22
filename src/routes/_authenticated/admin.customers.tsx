@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { AdminPage } from "@/components/admin/AdminShell";
 import { listCustomers } from "@/lib/admin.functions";
@@ -21,8 +21,12 @@ function CustomersAdmin() {
             </thead>
             <tbody className="divide-y divide-border">
               {(data ?? []).map((c) => (
-                <tr key={c.id}>
-                  <td className="p-3">{c.full_name ?? "—"}</td>
+                <tr key={c.id} className="hover:bg-muted/30">
+                  <td className="p-3">
+                    <Link to="/admin/customers/$id" params={{ id: c.id }} className="hover:text-accent font-medium underline decoration-dotted">
+                      {c.full_name ?? "—"}
+                    </Link>
+                  </td>
                   <td>{formatDate(c.created_at)}</td>
                   <td className="text-right">{c.order_count}</td>
                   <td className="text-right">{formatPrice(c.total_spent)}</td>

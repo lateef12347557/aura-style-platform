@@ -13,8 +13,8 @@ export function Footer() {
         <div>
           <div className="editorial-eyebrow mb-4 opacity-60">Shop</div>
           <ul className="space-y-2 text-sm">
-            <li><Link to="/shop/men">Men</Link></li>
-            <li><Link to="/shop/women">Women</Link></li>
+            <li><Link to="/shop/$gender" params={{ gender: "men" }}>Men</Link></li>
+            <li><Link to="/shop/$gender" params={{ gender: "women" }}>Women</Link></li>
             <li><Link to="/shop">All</Link></li>
           </ul>
         </div>

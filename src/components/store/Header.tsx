@@ -12,12 +12,6 @@ export function Header() {
   const { user, isAdmin } = useAuth();
   const [mobile, setMobile] = useState(false);
 
-  const navLinks = [
-    { to: "/shop", label: "Shop" },
-    { to: "/shop/men", label: "Men" },
-    { to: "/shop/women", label: "Women" },
-  ] as const;
-
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-screen-2xl items-center justify-between px-4 md:px-8">
@@ -34,16 +28,29 @@ export function Header() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-10 text-sm">
-          {navLinks.map((l) => (
-            <Link
-              key={l.to}
-              to={l.to}
-              className="hover:text-accent transition-colors"
-              activeProps={{ className: "text-accent" }}
-            >
-              {l.label}
-            </Link>
-          ))}
+          <Link
+            to="/shop"
+            className="hover:text-accent transition-colors"
+            activeProps={{ className: "text-accent" }}
+          >
+            Shop
+          </Link>
+          <Link
+            to="/shop/$gender"
+            params={{ gender: "men" }}
+            className="hover:text-accent transition-colors"
+            activeProps={{ className: "text-accent" }}
+          >
+            Men
+          </Link>
+          <Link
+            to="/shop/$gender"
+            params={{ gender: "women" }}
+            className="hover:text-accent transition-colors"
+            activeProps={{ className: "text-accent" }}
+          >
+            Women
+          </Link>
         </nav>
 
         <div className="flex items-center gap-1">
@@ -78,16 +85,29 @@ export function Header() {
       </div>
       {mobile && (
         <nav className="md:hidden border-t border-border/60 bg-background px-4 py-4 flex flex-col gap-3">
-          {navLinks.map((l) => (
-            <Link
-              key={l.to}
-              to={l.to}
-              className="text-sm py-1"
-              onClick={() => setMobile(false)}
-            >
-              {l.label}
-            </Link>
-          ))}
+          <Link
+            to="/shop"
+            className="text-sm py-1"
+            onClick={() => setMobile(false)}
+          >
+            Shop
+          </Link>
+          <Link
+            to="/shop/$gender"
+            params={{ gender: "men" }}
+            className="text-sm py-1"
+            onClick={() => setMobile(false)}
+          >
+            Men
+          </Link>
+          <Link
+            to="/shop/$gender"
+            params={{ gender: "women" }}
+            className="text-sm py-1"
+            onClick={() => setMobile(false)}
+          >
+            Women
+          </Link>
         </nav>
       )}
     </header>

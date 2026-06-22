@@ -3,7 +3,8 @@ import { useNavigate, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { slugify } from "@/lib/utils";
-import { Trash2, Plus } from "lucide-react";
+import { Trash2, Plus, Upload } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { listAllCategories } from "@/lib/categories.functions";
 import { upsertProduct } from "@/lib/products.functions";
 
@@ -109,11 +110,46 @@ export function ProductForm({ initial }: { initial: ProductFormValues }) {
         title="Images"
         action={<button onClick={() => update("images", [...form.images, { image_url: "", alt_text: "", is_primary: form.images.length === 0, display_order: form.images.length }])} className="text-xs underline flex items-center gap-1"><Plus className="h-3 w-3" /> Add image</button>}
       >
-        <p className="text-xs text-muted-foreground -mt-2 mb-3">Paste image URLs (hosted on a CDN or storage you control).</p>
+        <p className="text-xs text-muted-foreground -mt-2 mb-3">Upload files to Supabase Storage or paste image URLs directly.</p>
         <div className="space-y-2">
           {form.images.map((img, i) => (
             <div key={i} className="flex gap-2 items-center">
-              <input value={img.image_url} onChange={(e) => update("images", form.images.map((x, idx) => idx === i ? { ...x, image_url: e.target.value } : x))} placeholder="https://…" className="inp flex-1" />
+              <div className="flex-1 flex gap-2">
+                <input value={img.image_url} onChange={(e) => update("images", form.images.map((x, idx) => idx === i ? { ...x, image_url: e.target.value } : x))} placeholder="https://…" className="inp flex-1" />
+                <label className="bg-secondary border border-border hover:border-primary px-3 py-2 text-xs uppercase tracking-wider cursor-pointer flex items-center gap-1.5 shrink-0 select-none">
+                  <Upload className="h-3.5 w-3.5" />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      const toastId = toast.loading("Uploading product image...");
+                      try {
+                        const fileExt = file.name.split(".").pop();
+                        const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
+                        const filePath = `products/${fileName}`;
+                        
+                        const { error: uploadError } = await supabase.storage
+                          .from("images")
+                          .upload(filePath, file);
+
+                        if (uploadError) throw uploadError;
+
+                        const { data } = supabase.storage
+                          .from("images")
+                          .getPublicUrl(filePath);
+
+                        update("images", form.images.map((x, idx) => idx === i ? { ...x, image_url: data.publicUrl } : x));
+                        toast.success("Image uploaded successfully", { id: toastId });
+                      } catch (err) {
+                        toast.error(err instanceof Error ? err.message : "Upload failed", { id: toastId });
+                      }
+                    }}
+                  />
+                </label>
+              </div>
               <input value={img.alt_text} onChange={(e) => update("images", form.images.map((x, idx) => idx === i ? { ...x, alt_text: e.target.value } : x))} placeholder="alt" className="inp w-40" />
               <label className="text-xs flex items-center gap-1"><input type="radio" checked={img.is_primary} onChange={() => update("images", form.images.map((x, idx) => ({ ...x, is_primary: idx === i })))} /> Primary</label>
               <button onClick={() => update("images", form.images.filter((_, idx) => idx !== i))} className="text-destructive"><Trash2 className="h-4 w-4" /></button>

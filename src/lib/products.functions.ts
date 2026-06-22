@@ -54,7 +54,27 @@ export const listProducts = createServerFn({ method: "GET" })
 
     if (data.gender) q = q.eq("category.gender", data.gender);
     if (data.type) q = q.eq("category.type", data.type);
-    if (data.categorySlug) q = q.eq("category.slug", data.categorySlug);
+    
+    if (data.categorySlug) {
+      const { data: catRecord } = await sb
+        .from("categories")
+        .select("id")
+        .eq("slug", data.categorySlug)
+        .maybeSingle();
+        
+      if (catRecord) {
+        const { data: childCats } = await sb
+          .from("categories")
+          .select("id")
+          .eq("parent_id", catRecord.id);
+          
+        const categoryIds = [catRecord.id, ...(childCats ?? []).map((c) => c.id)];
+        q = q.in("category_id", categoryIds);
+      } else {
+        q = q.eq("category.slug", data.categorySlug);
+      }
+    }
+
     if (data.featured) q = q.eq("is_featured", true);
     if (data.minPrice !== undefined) q = q.gte("price", data.minPrice);
     if (data.maxPrice !== undefined) q = q.lte("price", data.maxPrice);
@@ -214,7 +234,7 @@ export const listAdminProducts = createServerFn({ method: "GET" })
     const { data, error } = await context.supabase
       .from("products")
       .select(
-        "id, name, slug, price, stock_quantity, is_active, is_featured, created_at, category:categories(name,gender,type)",
+        "id, name, slug, price, sku, stock_quantity, is_active, is_featured, created_at, category:categories(name,gender,type)",
       )
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);

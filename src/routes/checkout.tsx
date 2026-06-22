@@ -57,7 +57,7 @@ function CheckoutPage() {
     const val = e.target.value.replace(/\D/g, "").slice(0, 16);
     const matches = val.match(/\d{4,16}/g);
     const match = (matches && matches[0]) || "";
-    const parts = [];
+    const parts: string[] = [];
 
     for (let i = 0, len = match.length; i < len; i += 4) {
       parts.push(match.substring(i, i + 4));
