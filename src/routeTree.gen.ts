@@ -9,38 +9,332 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ShopRouteImport } from './routes/shop'
+import { Route as CheckoutRouteImport } from './routes/checkout'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ShopIndexRouteImport } from './routes/shop.index'
+import { Route as ShopGenderRouteImport } from './routes/shop.$gender'
+import { Route as ProductSlugRouteImport } from './routes/product.$slug'
+import { Route as OrderConfirmationIdRouteImport } from './routes/order-confirmation.$id'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
+import { Route as ShopGenderIndexRouteImport } from './routes/shop.$gender.index'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as ShopGenderTypeRouteImport } from './routes/shop.$gender.$type'
+import { Route as AuthenticatedAdminProductsRouteImport } from './routes/_authenticated/admin.products'
+import { Route as AuthenticatedAdminOrdersRouteImport } from './routes/_authenticated/admin.orders'
+import { Route as AuthenticatedAdminCustomersRouteImport } from './routes/_authenticated/admin.customers'
+import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_authenticated/admin.categories'
+import { Route as AuthenticatedAdminProductsNewRouteImport } from './routes/_authenticated/admin.products.new'
+import { Route as AuthenticatedAdminProductsIdRouteImport } from './routes/_authenticated/admin.products.$id'
+import { Route as AuthenticatedAdminOrdersIdRouteImport } from './routes/_authenticated/admin.orders.$id'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShopRoute = ShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShopIndexRoute = ShopIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ShopRoute,
+} as any)
+const ShopGenderRoute = ShopGenderRouteImport.update({
+  id: '/$gender',
+  path: '/$gender',
+  getParentRoute: () => ShopRoute,
+} as any)
+const ProductSlugRoute = ProductSlugRouteImport.update({
+  id: '/product/$slug',
+  path: '/product/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrderConfirmationIdRoute = OrderConfirmationIdRouteImport.update({
+  id: '/order-confirmation/$id',
+  path: '/order-confirmation/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const ShopGenderIndexRoute = ShopGenderIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ShopGenderRoute,
+} as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const ShopGenderTypeRoute = ShopGenderTypeRouteImport.update({
+  id: '/$type',
+  path: '/$type',
+  getParentRoute: () => ShopGenderRoute,
+} as any)
+const AuthenticatedAdminProductsRoute =
+  AuthenticatedAdminProductsRouteImport.update({
+    id: '/products',
+    path: '/products',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminOrdersRoute =
+  AuthenticatedAdminOrdersRouteImport.update({
+    id: '/orders',
+    path: '/orders',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminCustomersRoute =
+  AuthenticatedAdminCustomersRouteImport.update({
+    id: '/customers',
+    path: '/customers',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminCategoriesRoute =
+  AuthenticatedAdminCategoriesRouteImport.update({
+    id: '/categories',
+    path: '/categories',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminProductsNewRoute =
+  AuthenticatedAdminProductsNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedAdminProductsRoute,
+  } as any)
+const AuthenticatedAdminProductsIdRoute =
+  AuthenticatedAdminProductsIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAdminProductsRoute,
+  } as any)
+const AuthenticatedAdminOrdersIdRoute =
+  AuthenticatedAdminOrdersIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAdminOrdersRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/checkout': typeof CheckoutRoute
+  '/shop': typeof ShopRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/account': typeof AuthenticatedAccountRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/order-confirmation/$id': typeof OrderConfirmationIdRoute
+  '/product/$slug': typeof ProductSlugRoute
+  '/shop/$gender': typeof ShopGenderRouteWithChildren
+  '/shop/': typeof ShopIndexRoute
+  '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
+  '/admin/customers': typeof AuthenticatedAdminCustomersRoute
+  '/admin/orders': typeof AuthenticatedAdminOrdersRouteWithChildren
+  '/admin/products': typeof AuthenticatedAdminProductsRouteWithChildren
+  '/shop/$gender/$type': typeof ShopGenderTypeRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/shop/$gender/': typeof ShopGenderIndexRoute
+  '/admin/orders/$id': typeof AuthenticatedAdminOrdersIdRoute
+  '/admin/products/$id': typeof AuthenticatedAdminProductsIdRoute
+  '/admin/products/new': typeof AuthenticatedAdminProductsNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/checkout': typeof CheckoutRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/account': typeof AuthenticatedAccountRoute
+  '/order-confirmation/$id': typeof OrderConfirmationIdRoute
+  '/product/$slug': typeof ProductSlugRoute
+  '/shop': typeof ShopIndexRoute
+  '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
+  '/admin/customers': typeof AuthenticatedAdminCustomersRoute
+  '/admin/orders': typeof AuthenticatedAdminOrdersRouteWithChildren
+  '/admin/products': typeof AuthenticatedAdminProductsRouteWithChildren
+  '/shop/$gender/$type': typeof ShopGenderTypeRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
+  '/shop/$gender': typeof ShopGenderIndexRoute
+  '/admin/orders/$id': typeof AuthenticatedAdminOrdersIdRoute
+  '/admin/products/$id': typeof AuthenticatedAdminProductsIdRoute
+  '/admin/products/new': typeof AuthenticatedAdminProductsNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/checkout': typeof CheckoutRoute
+  '/shop': typeof ShopRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/_authenticated/account': typeof AuthenticatedAccountRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/order-confirmation/$id': typeof OrderConfirmationIdRoute
+  '/product/$slug': typeof ProductSlugRoute
+  '/shop/$gender': typeof ShopGenderRouteWithChildren
+  '/shop/': typeof ShopIndexRoute
+  '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
+  '/_authenticated/admin/customers': typeof AuthenticatedAdminCustomersRoute
+  '/_authenticated/admin/orders': typeof AuthenticatedAdminOrdersRouteWithChildren
+  '/_authenticated/admin/products': typeof AuthenticatedAdminProductsRouteWithChildren
+  '/shop/$gender/$type': typeof ShopGenderTypeRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/shop/$gender/': typeof ShopGenderIndexRoute
+  '/_authenticated/admin/orders/$id': typeof AuthenticatedAdminOrdersIdRoute
+  '/_authenticated/admin/products/$id': typeof AuthenticatedAdminProductsIdRoute
+  '/_authenticated/admin/products/new': typeof AuthenticatedAdminProductsNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/checkout'
+    | '/shop'
+    | '/sitemap.xml'
+    | '/account'
+    | '/admin'
+    | '/order-confirmation/$id'
+    | '/product/$slug'
+    | '/shop/$gender'
+    | '/shop/'
+    | '/admin/categories'
+    | '/admin/customers'
+    | '/admin/orders'
+    | '/admin/products'
+    | '/shop/$gender/$type'
+    | '/admin/'
+    | '/shop/$gender/'
+    | '/admin/orders/$id'
+    | '/admin/products/$id'
+    | '/admin/products/new'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/checkout'
+    | '/sitemap.xml'
+    | '/account'
+    | '/order-confirmation/$id'
+    | '/product/$slug'
+    | '/shop'
+    | '/admin/categories'
+    | '/admin/customers'
+    | '/admin/orders'
+    | '/admin/products'
+    | '/shop/$gender/$type'
+    | '/admin'
+    | '/shop/$gender'
+    | '/admin/orders/$id'
+    | '/admin/products/$id'
+    | '/admin/products/new'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/checkout'
+    | '/shop'
+    | '/sitemap.xml'
+    | '/_authenticated/account'
+    | '/_authenticated/admin'
+    | '/order-confirmation/$id'
+    | '/product/$slug'
+    | '/shop/$gender'
+    | '/shop/'
+    | '/_authenticated/admin/categories'
+    | '/_authenticated/admin/customers'
+    | '/_authenticated/admin/orders'
+    | '/_authenticated/admin/products'
+    | '/shop/$gender/$type'
+    | '/_authenticated/admin/'
+    | '/shop/$gender/'
+    | '/_authenticated/admin/orders/$id'
+    | '/_authenticated/admin/products/$id'
+    | '/_authenticated/admin/products/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  CheckoutRoute: typeof CheckoutRoute
+  ShopRoute: typeof ShopRouteWithChildren
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  OrderConfirmationIdRoute: typeof OrderConfirmationIdRoute
+  ProductSlugRoute: typeof ProductSlugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shop': {
+      id: '/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +342,218 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/shop/': {
+      id: '/shop/'
+      path: '/'
+      fullPath: '/shop/'
+      preLoaderRoute: typeof ShopIndexRouteImport
+      parentRoute: typeof ShopRoute
+    }
+    '/shop/$gender': {
+      id: '/shop/$gender'
+      path: '/$gender'
+      fullPath: '/shop/$gender'
+      preLoaderRoute: typeof ShopGenderRouteImport
+      parentRoute: typeof ShopRoute
+    }
+    '/product/$slug': {
+      id: '/product/$slug'
+      path: '/product/$slug'
+      fullPath: '/product/$slug'
+      preLoaderRoute: typeof ProductSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/order-confirmation/$id': {
+      id: '/order-confirmation/$id'
+      path: '/order-confirmation/$id'
+      fullPath: '/order-confirmation/$id'
+      preLoaderRoute: typeof OrderConfirmationIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/account': {
+      id: '/_authenticated/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AuthenticatedAccountRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/shop/$gender/': {
+      id: '/shop/$gender/'
+      path: '/'
+      fullPath: '/shop/$gender/'
+      preLoaderRoute: typeof ShopGenderIndexRouteImport
+      parentRoute: typeof ShopGenderRoute
+    }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/shop/$gender/$type': {
+      id: '/shop/$gender/$type'
+      path: '/$type'
+      fullPath: '/shop/$gender/$type'
+      preLoaderRoute: typeof ShopGenderTypeRouteImport
+      parentRoute: typeof ShopGenderRoute
+    }
+    '/_authenticated/admin/products': {
+      id: '/_authenticated/admin/products'
+      path: '/products'
+      fullPath: '/admin/products'
+      preLoaderRoute: typeof AuthenticatedAdminProductsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/orders': {
+      id: '/_authenticated/admin/orders'
+      path: '/orders'
+      fullPath: '/admin/orders'
+      preLoaderRoute: typeof AuthenticatedAdminOrdersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/customers': {
+      id: '/_authenticated/admin/customers'
+      path: '/customers'
+      fullPath: '/admin/customers'
+      preLoaderRoute: typeof AuthenticatedAdminCustomersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/categories': {
+      id: '/_authenticated/admin/categories'
+      path: '/categories'
+      fullPath: '/admin/categories'
+      preLoaderRoute: typeof AuthenticatedAdminCategoriesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/products/new': {
+      id: '/_authenticated/admin/products/new'
+      path: '/new'
+      fullPath: '/admin/products/new'
+      preLoaderRoute: typeof AuthenticatedAdminProductsNewRouteImport
+      parentRoute: typeof AuthenticatedAdminProductsRoute
+    }
+    '/_authenticated/admin/products/$id': {
+      id: '/_authenticated/admin/products/$id'
+      path: '/$id'
+      fullPath: '/admin/products/$id'
+      preLoaderRoute: typeof AuthenticatedAdminProductsIdRouteImport
+      parentRoute: typeof AuthenticatedAdminProductsRoute
+    }
+    '/_authenticated/admin/orders/$id': {
+      id: '/_authenticated/admin/orders/$id'
+      path: '/$id'
+      fullPath: '/admin/orders/$id'
+      preLoaderRoute: typeof AuthenticatedAdminOrdersIdRouteImport
+      parentRoute: typeof AuthenticatedAdminOrdersRoute
+    }
   }
 }
 
+interface AuthenticatedAdminOrdersRouteChildren {
+  AuthenticatedAdminOrdersIdRoute: typeof AuthenticatedAdminOrdersIdRoute
+}
+
+const AuthenticatedAdminOrdersRouteChildren: AuthenticatedAdminOrdersRouteChildren =
+  {
+    AuthenticatedAdminOrdersIdRoute: AuthenticatedAdminOrdersIdRoute,
+  }
+
+const AuthenticatedAdminOrdersRouteWithChildren =
+  AuthenticatedAdminOrdersRoute._addFileChildren(
+    AuthenticatedAdminOrdersRouteChildren,
+  )
+
+interface AuthenticatedAdminProductsRouteChildren {
+  AuthenticatedAdminProductsIdRoute: typeof AuthenticatedAdminProductsIdRoute
+  AuthenticatedAdminProductsNewRoute: typeof AuthenticatedAdminProductsNewRoute
+}
+
+const AuthenticatedAdminProductsRouteChildren: AuthenticatedAdminProductsRouteChildren =
+  {
+    AuthenticatedAdminProductsIdRoute: AuthenticatedAdminProductsIdRoute,
+    AuthenticatedAdminProductsNewRoute: AuthenticatedAdminProductsNewRoute,
+  }
+
+const AuthenticatedAdminProductsRouteWithChildren =
+  AuthenticatedAdminProductsRoute._addFileChildren(
+    AuthenticatedAdminProductsRouteChildren,
+  )
+
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminCategoriesRoute: typeof AuthenticatedAdminCategoriesRoute
+  AuthenticatedAdminCustomersRoute: typeof AuthenticatedAdminCustomersRoute
+  AuthenticatedAdminOrdersRoute: typeof AuthenticatedAdminOrdersRouteWithChildren
+  AuthenticatedAdminProductsRoute: typeof AuthenticatedAdminProductsRouteWithChildren
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminCategoriesRoute: AuthenticatedAdminCategoriesRoute,
+  AuthenticatedAdminCustomersRoute: AuthenticatedAdminCustomersRoute,
+  AuthenticatedAdminOrdersRoute: AuthenticatedAdminOrdersRouteWithChildren,
+  AuthenticatedAdminProductsRoute: AuthenticatedAdminProductsRouteWithChildren,
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAccountRoute: AuthenticatedAccountRoute,
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
+interface ShopGenderRouteChildren {
+  ShopGenderTypeRoute: typeof ShopGenderTypeRoute
+  ShopGenderIndexRoute: typeof ShopGenderIndexRoute
+}
+
+const ShopGenderRouteChildren: ShopGenderRouteChildren = {
+  ShopGenderTypeRoute: ShopGenderTypeRoute,
+  ShopGenderIndexRoute: ShopGenderIndexRoute,
+}
+
+const ShopGenderRouteWithChildren = ShopGenderRoute._addFileChildren(
+  ShopGenderRouteChildren,
+)
+
+interface ShopRouteChildren {
+  ShopGenderRoute: typeof ShopGenderRouteWithChildren
+  ShopIndexRoute: typeof ShopIndexRoute
+}
+
+const ShopRouteChildren: ShopRouteChildren = {
+  ShopGenderRoute: ShopGenderRouteWithChildren,
+  ShopIndexRoute: ShopIndexRoute,
+}
+
+const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  CheckoutRoute: CheckoutRoute,
+  ShopRoute: ShopRouteWithChildren,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  OrderConfirmationIdRoute: OrderConfirmationIdRoute,
+  ProductSlugRoute: ProductSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
