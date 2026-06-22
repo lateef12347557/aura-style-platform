@@ -23,6 +23,7 @@ const PlaceOrderInput = z.object({
     postal_code: z.string().min(1).max(20),
     country: z.string().min(2).max(60),
   }),
+  stripe_payment_id: z.string().optional(),
 });
 
 export const placeOrder = createServerFn({ method: "POST" })
@@ -37,6 +38,7 @@ export const placeOrder = createServerFn({ method: "POST" })
         status: "pending",
         total_amount: total,
         shipping_address: data.shipping_address,
+        stripe_payment_id: data.stripe_payment_id || null,
       })
       .select("id")
       .single();

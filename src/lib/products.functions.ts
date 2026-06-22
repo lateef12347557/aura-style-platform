@@ -19,31 +19,78 @@ const ListInput = z.object({
   type: z.enum(["clothing", "shoes"]).optional(),
   categorySlug: z.string().optional(),
   featured: z.boolean().optional(),
-  sort: z.enum(["newest", "price_asc", "price_desc"]).default("newest"),
-  limit: z.number().int().min(1).max(60).default(24),
+  sort: z.enum(["newest", "price_asc", "price_desc", "best_rated"]).default("newest"),
+  limit: z.number().int().min(1).max(100).default(24),
+  sizes: z.array(z.string()).optional(),
+  colors: z.array(z.string()).optional(),
+  minPrice: z.number().optional(),
+  maxPrice: z.number().optional(),
+  search: z.string().optional(),
 });
 
 export const listProducts = createServerFn({ method: "GET" })
   .inputValidator((input: unknown) => ListInput.parse(input ?? {}))
   .handler(async ({ data }) => {
     const sb = publicClient();
+    
+    // Determine if we need to inner join variants for filtering
+    const hasVariantFilter = (data.sizes && data.sizes.length > 0) || (data.colors && data.colors.length > 0);
+    
+    let selectStr = "id, name, slug, price, compare_price, is_featured, created_at, category:categories!inner(id,name,slug,gender,type), images:product_images(image_url,is_primary,display_order)";
+    
+    if (hasVariantFilter) {
+      selectStr += ", variants:product_variants!inner(id,size,color,stock_quantity)";
+    } else {
+      selectStr += ", variants:product_variants(id,size,color,stock_quantity)";
+    }
+    
+    // For rating sort, we need reviews
+    selectStr += ", reviews(rating)";
+
     let q = sb
       .from("products")
-      .select(
-        "id, name, slug, price, compare_price, is_featured, created_at, category:categories!inner(id,name,slug,gender,type), images:product_images(image_url,is_primary,display_order)",
-      )
+      .select(selectStr)
       .eq("is_active", true);
+
     if (data.gender) q = q.eq("category.gender", data.gender);
     if (data.type) q = q.eq("category.type", data.type);
     if (data.categorySlug) q = q.eq("category.slug", data.categorySlug);
     if (data.featured) q = q.eq("is_featured", true);
-    if (data.sort === "price_asc") q = q.order("price", { ascending: true });
-    else if (data.sort === "price_desc") q = q.order("price", { ascending: false });
-    else q = q.order("created_at", { ascending: false });
+    if (data.minPrice !== undefined) q = q.gte("price", data.minPrice);
+    if (data.maxPrice !== undefined) q = q.lte("price", data.maxPrice);
+    if (data.search) q = q.ilike("name", `%${data.search}%`);
+
+    if (data.sizes && data.sizes.length > 0) {
+      q = q.in("variants.size", data.sizes);
+    }
+    if (data.colors && data.colors.length > 0) {
+      q = q.in("variants.color", data.colors);
+    }
+
+    if (data.sort === "price_asc") {
+      q = q.order("price", { ascending: true });
+    } else if (data.sort === "price_desc") {
+      q = q.order("price", { ascending: false });
+    } else {
+      q = q.order("created_at", { ascending: false });
+    }
+
     q = q.limit(data.limit);
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
-    return rows ?? [];
+
+    let result = (rows ?? []) as any[];
+
+    // If sorting by best_rated, compute average rating and sort in JavaScript
+    if (data.sort === "best_rated") {
+      result = result.map(row => {
+        const revs = row.reviews ?? [];
+        const avg = revs.length ? revs.reduce((sum: number, r: any) => sum + r.rating, 0) / revs.length : 0;
+        return { ...row, avgRating: avg };
+      }).sort((a, b) => b.avgRating - a.avgRating);
+    }
+
+    return result;
   });
 
 export const getProductBySlug = createServerFn({ method: "GET" })
@@ -192,4 +239,46 @@ export const getAdminProduct = createServerFn({ method: "GET" })
       .maybeSingle();
     if (error) throw new Error(error.message);
     return product;
+  });
+
+export const bulkUpdateStatus = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ ids: z.array(z.string().uuid()), is_active: z.boolean() }).parse(input)
+  )
+  .handler(async ({ data, context }) => {
+    const { data: adminCheck } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (!adminCheck) throw new Error("Forbidden");
+
+    const { error } = await context.supabase
+      .from("products")
+      .update({ is_active: data.is_active })
+      .in("id", data.ids);
+
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const bulkDeleteProducts = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ ids: z.array(z.string().uuid()) }).parse(input)
+  )
+  .handler(async ({ data, context }) => {
+    const { data: adminCheck } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (!adminCheck) throw new Error("Forbidden");
+
+    const { error } = await context.supabase
+      .from("products")
+      .delete()
+      .in("id", data.ids);
+
+    if (error) throw new Error(error.message);
+    return { ok: true };
   });

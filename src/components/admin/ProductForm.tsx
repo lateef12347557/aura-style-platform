@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import slugify from "slugify";
+import { slugify } from "@/lib/utils";
 import { Trash2, Plus } from "lucide-react";
 import { listAllCategories } from "@/lib/categories.functions";
 import { upsertProduct } from "@/lib/products.functions";
