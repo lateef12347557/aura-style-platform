@@ -37,6 +37,11 @@ function EditProduct() {
     is_active: boolean;
     meta_title: string | null;
     meta_description: string | null;
+    materials: string | null;
+    care_instructions: string | null;
+    tags: string[] | null;
+    available_sizes: string[] | null;
+    available_colors: string[] | null;
     images: Array<{
       image_url: string;
       alt_text: string | null;
@@ -65,6 +70,11 @@ function EditProduct() {
     is_active: p.is_active,
     meta_title: p.meta_title ?? "",
     meta_description: p.meta_description ?? "",
+    materials: p.materials ?? "",
+    care_instructions: p.care_instructions ?? "",
+    tags: p.tags ?? [],
+    available_sizes: p.available_sizes ?? [],
+    available_colors: p.available_colors ?? [],
     images: (p.images ?? []).map((i) => ({
       image_url: i.image_url,
       alt_text: i.alt_text ?? "",
