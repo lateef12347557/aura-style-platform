@@ -8,12 +8,20 @@ import {
   listAllCategories,
   upsertCategory,
   toggleCategoryActive,
+<<<<<<< HEAD
   reorderCategories,
+=======
+  deleteCategory,
+  reorderCategory,
+>>>>>>> 005021b38af35ac52e5cd463d8dd8580f57ecb22
 } from "@/lib/categories.functions";
 import {
   ChevronRight,
   Folder,
+<<<<<<< HEAD
   FolderOpen,
+=======
+>>>>>>> 005021b38af35ac52e5cd463d8dd8580f57ecb22
   Edit,
   Trash2,
   Eye,
@@ -116,6 +124,7 @@ function CategoriesAdmin() {
     }
   }
 
+<<<<<<< HEAD
   async function moveCategory(category: Category, direction: "up" | "down") {
     const categories = (data ?? []) as Category[];
     const siblings = categories
@@ -139,6 +148,25 @@ function CategoriesAdmin() {
       toast.success("Category order updated");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed to update order");
+=======
+  async function remove(id: string, name: string) {
+    if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+    try {
+      await deleteCategory({ data: { id } });
+      toast.success("Category deleted");
+      qc.invalidateQueries({ queryKey: ["admin-cats"] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed");
+    }
+  }
+
+  async function move(id: string, direction: "up" | "down") {
+    try {
+      await reorderCategory({ data: { id, direction } });
+      qc.invalidateQueries({ queryKey: ["admin-cats"] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed");
+>>>>>>> 005021b38af35ac52e5cd463d8dd8580f57ecb22
     }
   }
 
@@ -195,6 +223,7 @@ function CategoriesAdmin() {
               </button>
             </div>
 
+<<<<<<< HEAD
             <div className="w-32 flex justify-end gap-2 pr-2">
               <button
                 onClick={() => moveCategory(c, "up")}
@@ -209,6 +238,22 @@ function CategoriesAdmin() {
                 title="Move down"
               >
                 <ArrowDown className="h-4 w-4" />
+=======
+            <div className="w-32 flex justify-end gap-2 pr-2 items-center">
+              <button
+                onClick={() => move(c.id, "up")}
+                className="hover:text-accent p-1 transition-colors"
+                title="Move up"
+              >
+                <ArrowUp className="h-3.5 w-3.5" />
+              </button>
+              <button
+                onClick={() => move(c.id, "down")}
+                className="hover:text-accent p-1 transition-colors"
+                title="Move down"
+              >
+                <ArrowDown className="h-3.5 w-3.5" />
+>>>>>>> 005021b38af35ac52e5cd463d8dd8580f57ecb22
               </button>
               <button
                 onClick={() =>
@@ -230,6 +275,13 @@ function CategoriesAdmin() {
                 title="Edit"
               >
                 <Edit className="h-3.5 w-3.5" />
+              </button>
+              <button
+                onClick={() => remove(c.id, c.name)}
+                className="hover:text-destructive p-1 transition-colors"
+                title="Delete"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
               </button>
             </div>
           </div>
@@ -282,7 +334,7 @@ function CategoriesAdmin() {
               <span className="w-16 text-center">Gender</span>
               <span className="w-16 text-center">Type</span>
               <span className="w-20 text-center">Status</span>
-              <span className="w-20 text-right pr-4">Actions</span>
+              <span className="w-32 text-right pr-4">Actions</span>
             </div>
           </div>
 
