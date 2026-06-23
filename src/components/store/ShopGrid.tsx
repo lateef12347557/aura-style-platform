@@ -87,8 +87,8 @@ export function ShopGrid({
 
   function updateParams(newParams: Partial<ShopSearchParams>) {
     navigate({
-      search: (prev) => {
-        const next = { ...prev, ...newParams } as Record<string, unknown>;
+      search: ((prev: Record<string, unknown>) => {
+        const next: Record<string, unknown> = { ...prev, ...newParams };
         // Clean up empty params
         Object.keys(next).forEach((key) => {
           if (
@@ -101,7 +101,7 @@ export function ShopGrid({
           }
         });
         return next;
-      },
+      }) as never,
     });
   }
 

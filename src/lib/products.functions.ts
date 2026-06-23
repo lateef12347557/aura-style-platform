@@ -97,6 +97,24 @@ export const listProducts = createServerFn({ method: "GET" })
     interface ReviewRating {
       rating: number;
     }
+    interface ProductCategory {
+      id: string;
+      name: string;
+      slug: string;
+      gender: string;
+      type: string;
+    }
+    interface ProductImage {
+      image_url: string;
+      is_primary: boolean | null;
+      display_order: number | null;
+    }
+    interface ProductVariant {
+      id: string;
+      size: string | null;
+      color: string | null;
+      stock_quantity: number;
+    }
     interface ProductQueryResult {
       id: string;
       name: string;
@@ -105,9 +123,9 @@ export const listProducts = createServerFn({ method: "GET" })
       compare_price: number | null;
       is_featured: boolean;
       created_at: string;
-      category: unknown;
-      images: unknown;
-      variants: unknown;
+      category: ProductCategory | null;
+      images: ProductImage[];
+      variants: ProductVariant[];
       reviews: ReviewRating[] | null;
       avgRating?: number;
     }
@@ -162,6 +180,11 @@ const ProductUpsert = z.object({
   is_active: z.boolean().default(true),
   meta_title: z.string().max(200).optional().nullable(),
   meta_description: z.string().max(500).optional().nullable(),
+  materials: z.string().max(500).optional().nullable(),
+  care_instructions: z.string().max(1000).optional().nullable(),
+  tags: z.array(z.string().max(40)).default([]),
+  available_sizes: z.array(z.string().max(20)).default([]),
+  available_colors: z.array(z.string().max(30)).default([]),
   images: z
     .array(
       z.object({

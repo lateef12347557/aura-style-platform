@@ -3,7 +3,7 @@ import { useNavigate, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { slugify } from "@/lib/utils";
-import { Trash2, Plus, Upload } from "lucide-react";
+import { Trash2, Plus, Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { listAllCategories } from "@/lib/categories.functions";
 import { upsertProduct } from "@/lib/products.functions";
@@ -35,6 +35,11 @@ export interface ProductFormValues {
   is_active: boolean;
   meta_title: string;
   meta_description: string;
+  materials: string;
+  care_instructions: string;
+  tags: string[];
+  available_sizes: string[];
+  available_colors: string[];
   images: ImageForm[];
   variants: VariantForm[];
 }
@@ -53,6 +58,11 @@ export function emptyProduct(): ProductFormValues {
     is_active: true,
     meta_title: "",
     meta_description: "",
+    materials: "",
+    care_instructions: "",
+    tags: [],
+    available_sizes: [],
+    available_colors: [],
     images: [],
     variants: [],
   };
@@ -88,6 +98,8 @@ export function ProductForm({ initial }: { initial: ProductFormValues }) {
         sku: form.sku || null,
         meta_title: form.meta_title || null,
         meta_description: form.meta_description || null,
+        materials: form.materials || null,
+        care_instructions: form.care_instructions || null,
         images: form.images.filter((i) => i.image_url),
         variants: form.variants.filter((v) => v.size || v.color),
       };
@@ -442,6 +454,47 @@ export function ProductForm({ initial }: { initial: ProductFormValues }) {
         </Field>
       </Section>
 
+      <Section title="Details & Properties">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Field label="Materials">
+            <input
+              placeholder="e.g. 100% Italian leather, suede lining"
+              value={form.materials}
+              onChange={(e) => update("materials", e.target.value)}
+              className="inp"
+            />
+          </Field>
+          <Field label="Care instructions">
+            <input
+              placeholder="e.g. Wipe with soft cloth, store in dust bag"
+              value={form.care_instructions}
+              onChange={(e) => update("care_instructions", e.target.value)}
+              className="inp"
+            />
+          </Field>
+        </div>
+        <ChipsField
+          label="Tags (collections, search keywords)"
+          values={form.tags}
+          onChange={(v) => update("tags", v)}
+          placeholder="Add tag and press Enter"
+        />
+        <ChipsField
+          label="Available sizes"
+          values={form.available_sizes}
+          onChange={(v) => update("available_sizes", v)}
+          suggestions={["XS", "S", "M", "L", "XL", "XXL", "36", "37", "38", "39", "40", "41", "42", "43", "44"]}
+          placeholder="Add size and press Enter"
+        />
+        <ChipsField
+          label="Available colors"
+          values={form.available_colors}
+          onChange={(v) => update("available_colors", v)}
+          suggestions={["Black", "White", "Cream", "Olive", "Navy", "Camel", "Brown", "Gold", "Burgundy"]}
+          placeholder="Add color and press Enter"
+        />
+      </Section>
+
       <div className="flex gap-3 sticky bottom-0 bg-secondary py-4 -mx-8 px-8 border-t border-border">
         <Link to="/admin/products" className="px-4 py-2 text-sm">
           Cancel
@@ -455,8 +508,86 @@ export function ProductForm({ initial }: { initial: ProductFormValues }) {
         </button>
       </div>
 
-      <style>{`.inp{width:100%;background:var(--background);border:1px solid var(--border);padding:.5rem .75rem;font-size:.875rem}.inp:focus{outline:none;border-color:var(--accent)}`}</style>
+      <style>{`.inp{width:100%;background:var(--background);border:1px solid var(--border);padding:.5rem .75rem;font-size:.875rem;color:var(--foreground);transition:border-color .2s ease}.inp:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px oklch(0.78 0.135 85 / 15%)}`}</style>
     </div>
+  );
+}
+
+function ChipsField({
+  label,
+  values,
+  onChange,
+  placeholder,
+  suggestions,
+}: {
+  label: string;
+  values: string[];
+  onChange: (next: string[]) => void;
+  placeholder?: string;
+  suggestions?: string[];
+}) {
+  const [draft, setDraft] = useState("");
+  function add(v: string) {
+    const t = v.trim();
+    if (!t || values.includes(t)) return;
+    onChange([...values, t]);
+    setDraft("");
+  }
+  function remove(v: string) {
+    onChange(values.filter((x) => x !== v));
+  }
+  return (
+    <Field label={label}>
+      <div className="flex flex-wrap gap-1.5 mb-2 min-h-[1.5rem]">
+        {values.map((v) => (
+          <span
+            key={v}
+            className="inline-flex items-center gap-1 bg-accent/10 text-accent border border-accent/40 px-2 py-0.5 text-xs uppercase tracking-wider"
+          >
+            {v}
+            <button
+              onClick={() => remove(v)}
+              className="hover:text-destructive transition-colors"
+              type="button"
+              aria-label={`Remove ${v}`}
+            >
+              <X className="h-3 w-3" />
+            </button>
+          </span>
+        ))}
+      </div>
+      <input
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === ",") {
+            e.preventDefault();
+            add(draft);
+          } else if (e.key === "Backspace" && !draft && values.length) {
+            remove(values[values.length - 1]);
+          }
+        }}
+        onBlur={() => draft && add(draft)}
+        placeholder={placeholder}
+        className="inp"
+      />
+      {suggestions && suggestions.length > 0 && (
+        <div className="flex flex-wrap gap-1 mt-2">
+          {suggestions
+            .filter((s) => !values.includes(s))
+            .map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => add(s)}
+                className="text-[10px] uppercase tracking-wider border border-border px-2 py-0.5 hover:border-accent hover:text-accent transition-colors"
+              >
+                + {s}
+              </button>
+            ))}
+        </div>
+      )}
+    </Field>
   );
 }
 

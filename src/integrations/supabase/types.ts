@@ -251,6 +251,9 @@ export type Database = {
       }
       products: {
         Row: {
+          available_colors: string[]
+          available_sizes: string[]
+          care_instructions: string | null
           category_id: string
           compare_price: number | null
           created_at: string
@@ -258,6 +261,7 @@ export type Database = {
           id: string
           is_active: boolean
           is_featured: boolean
+          materials: string | null
           meta_description: string | null
           meta_title: string | null
           name: string
@@ -265,9 +269,13 @@ export type Database = {
           sku: string | null
           slug: string
           stock_quantity: number
+          tags: string[]
           updated_at: string
         }
         Insert: {
+          available_colors?: string[]
+          available_sizes?: string[]
+          care_instructions?: string | null
           category_id: string
           compare_price?: number | null
           created_at?: string
@@ -275,6 +283,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           is_featured?: boolean
+          materials?: string | null
           meta_description?: string | null
           meta_title?: string | null
           name: string
@@ -282,9 +291,13 @@ export type Database = {
           sku?: string | null
           slug: string
           stock_quantity?: number
+          tags?: string[]
           updated_at?: string
         }
         Update: {
+          available_colors?: string[]
+          available_sizes?: string[]
+          care_instructions?: string | null
           category_id?: string
           compare_price?: number | null
           created_at?: string
@@ -292,6 +305,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           is_featured?: boolean
+          materials?: string | null
           meta_description?: string | null
           meta_title?: string | null
           name?: string
@@ -299,6 +313,7 @@ export type Database = {
           sku?: string | null
           slug?: string
           stock_quantity?: number
+          tags?: string[]
           updated_at?: string
         }
         Relationships: [
@@ -405,6 +420,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      swap_category_order: {
+        Args: { a: string; b: string }
+        Returns: undefined
       }
     }
     Enums: {

@@ -135,3 +135,27 @@ export const updateOrderStatus = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+export const bulkUpdateOrderStatus = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        ids: z.array(z.string().uuid()).min(1),
+        status: z.enum(["pending", "processing", "shipped", "delivered", "cancelled"]),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: adminCheck } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (!adminCheck) throw new Error("Forbidden");
+    const { error } = await context.supabase
+      .from("orders")
+      .update({ status: data.status })
+      .in("id", data.ids);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
