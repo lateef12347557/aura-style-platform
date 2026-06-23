@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { toast } from "sonner";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { getAdminOverview } from "@/lib/admin.functions";
+import { getAdminOverview, seedCatalogFromAdmin } from "@/lib/admin.functions";
 import { AdminPage } from "@/components/admin/AdminShell";
 import { formatPrice, formatDate } from "@/lib/format";
 
@@ -10,10 +12,31 @@ export const Route = createFileRoute("/_authenticated/admin/")({
 });
 
 function AdminOverview() {
+  const qc = useQueryClient();
+  const [seeding, setSeeding] = useState(false);
   const { data, isLoading } = useQuery({
     queryKey: ["admin-overview"],
     queryFn: () => getAdminOverview(),
   });
+
+  async function handleSync() {
+    if (
+      !confirm(
+        "Are you sure you want to clean and seed the database? This will clear old categories and products and load the clean MDCLASSIC WEARS categories (Male & Female) and products."
+      )
+    )
+      return;
+    setSeeding(true);
+    try {
+      await seedCatalogFromAdmin();
+      toast.success("Database seeded and synchronized successfully!");
+      qc.invalidateQueries();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Synchronization failed");
+    } finally {
+      setSeeding(false);
+    }
+  }
 
   if (isLoading || !data) {
     return (
@@ -24,7 +47,19 @@ function AdminOverview() {
   }
 
   return (
-    <AdminPage title="Overview" eyebrow="Dashboard">
+    <AdminPage
+      title="Overview"
+      eyebrow="Dashboard"
+      actions={
+        <button
+          onClick={handleSync}
+          disabled={seeding}
+          className="bg-primary text-primary-foreground px-4 py-2 text-sm uppercase tracking-wider disabled:opacity-50 hover:bg-accent font-medium transition-colors cursor-pointer"
+        >
+          {seeding ? "Syncing..." : "Sync Database Catalog"}
+        </button>
+      }
+    >
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatCard label="Revenue" value={formatPrice(data.totalRevenue)} />
         <StatCard label="Orders" value={String(data.totalOrders)} />
