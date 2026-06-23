@@ -266,11 +266,11 @@ export function ShopGrid({
   );
 
   return (
-    <div className="mx-auto max-w-screen-2xl px-4 md:px-8 py-12">
+    <div className="container-max py-12">
       {/* Header section */}
       <div className="mb-8 md:mb-12">
         <div className="editorial-eyebrow text-muted-foreground mb-2">{eyebrow}</div>
-        <h1 className="font-display text-4xl md:text-5xl lg:text-6xl tracking-tight">{title}</h1>
+        <h1 className="font-display text-3xl md:text-4xl lg:text-5xl tracking-tight">{title}</h1>
       </div>
 
       {/* Toolbar / Sorting */}
@@ -292,7 +292,7 @@ export function ShopGrid({
           <select
             value={sort}
             onChange={(e) => updateParams({ sort: e.target.value as Sort })}
-            className="bg-background border border-border px-3 py-2 text-xs focus:outline-none focus:border-accent cursor-pointer font-medium"
+            className="bg-background border border-border px-3 py-2 text-xs focus:outline-none focus:border-accent cursor-pointer font-medium rounded-md"
           >
             <option value="newest">Newest Arrivals</option>
             <option value="price_asc">Price: Low to High</option>
@@ -365,14 +365,16 @@ export function ShopGrid({
       {/* Main Grid Layout */}
       <div className="flex gap-10">
         {/* Desktop Sidebar Filter (sticky) */}
-        <aside className="hidden lg:block w-64 shrink-0 self-start sticky top-24 max-h-[80vh] overflow-y-auto pr-4 scrollbar-thin">
-          {renderFilterSections()}
+        <aside className="hidden lg:block w-72 shrink-0 self-start sticky top-24 max-h-[80vh] overflow-y-auto pr-4">
+          <div className="bg-background border border-border rounded-lg p-5 shadow-sm">
+            {renderFilterSections()}
+          </div>
         </aside>
 
         {/* Product Grid */}
         <div className="flex-1">
           {productsQuery.isLoading ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-12">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
               {Array.from({ length: 9 }).map((_, i) => (
                 <div key={i} className="space-y-4">
                   <div className="aspect-[4/5] bg-muted animate-pulse" />
@@ -399,7 +401,7 @@ export function ShopGrid({
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-12">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
               {productsQuery.data!.map((p) => (
                 <ProductCard
                   key={p.slug}

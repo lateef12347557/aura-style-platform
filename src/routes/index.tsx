@@ -43,43 +43,37 @@ function Home() {
   return (
     <StoreLayout>
       {/* HERO */}
-      <section className="relative h-[88vh] min-h-[560px] w-full overflow-hidden bg-secondary">
+      <section className="relative h-[78vh] min-h-[520px] w-full overflow-hidden bg-paper">
         <img
           src={hero}
           alt=""
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover object-center"
           width={1920}
           height={1280}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-transparent" />
-        <div className="relative h-full mx-auto max-w-screen-2xl px-6 md:px-12 flex items-end pb-20">
+        <div className="absolute inset-0 bg-black/20" />
+        <div className="relative h-full container-max flex items-center">
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-xl"
+            transition={{ duration: 0.9, ease: 'easeOut' }}
+            className="max-w-2xl text-white"
           >
-            <div className="editorial-eyebrow text-foreground/80 mb-4">
-              Spring/Summer · Volume 04
-            </div>
-            <h1 className="font-display text-5xl md:text-7xl leading-[0.95] mb-6">
-              Quiet luxury, considered cuts.
-            </h1>
-            <p className="text-base text-foreground/80 max-w-md mb-8">
-              A studied edit of footwear and ready-to-wear. Made in small batches by makers we know.
-            </p>
-            <div className="flex gap-3">
+            <div className="editorial-eyebrow text-white/75 mb-4">Spring / Summer · Volume 04</div>
+            <h1 className="hero-title text-5xl md:text-6xl lg:text-7xl mb-6">Quiet luxury, considered cuts.</h1>
+            <p className="text-lg text-white/90 max-w-lg mb-8">A studied edit of footwear and ready-to-wear, made in small batches with attention to detail.</p>
+            <div className="flex gap-4">
               <Link
                 to="/shop/$gender"
                 params={{ gender: "women" }}
-                className="bg-primary text-primary-foreground px-7 py-3 text-sm tracking-wider uppercase hover:bg-accent transition-colors"
+                className="bg-ink text-white px-6 py-3 text-sm tracking-wider uppercase rounded-md shadow-card hover:opacity-95 transition-in-out-quad"
               >
                 Shop Women
               </Link>
               <Link
                 to="/shop/$gender"
                 params={{ gender: "men" }}
-                className="border border-primary text-primary px-7 py-3 text-sm tracking-wider uppercase hover:bg-primary hover:text-primary-foreground transition-colors"
+                className="border border-white/30 text-white px-6 py-3 text-sm tracking-wider uppercase rounded-md hover:bg-white/6 transition-in-out-quad"
               >
                 Shop Men
               </Link>
@@ -89,7 +83,7 @@ function Home() {
       </section>
 
       {/* COLLECTIONS SPLIT */}
-      <section className="mx-auto max-w-screen-2xl px-4 md:px-8 py-24 grid md:grid-cols-2 gap-6">
+      <section className="container-max py-20 grid md:grid-cols-2 gap-6">
         {[
           {
             gender: "women" as const,
@@ -106,7 +100,7 @@ function Home() {
             key={c.gender}
             to="/shop/$gender"
             params={{ gender: c.gender }}
-            className="group relative block aspect-[4/5] overflow-hidden bg-muted"
+            className="group relative block rounded-lg overflow-hidden aspect-[4/5] bg-muted shadow-card"
           >
             <img
               src={c.img}
