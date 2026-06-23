@@ -8,8 +8,20 @@ import {
   listAllCategories,
   upsertCategory,
   toggleCategoryActive,
+  deleteCategory,
+  reorderCategory,
 } from "@/lib/categories.functions";
-import { ChevronRight, Folder, FolderOpen, Edit, Trash2, Eye, EyeOff, Upload } from "lucide-react";
+import {
+  ChevronRight,
+  Folder,
+  Edit,
+  Trash2,
+  Eye,
+  EyeOff,
+  Upload,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin/categories")({
@@ -94,6 +106,26 @@ function CategoriesAdmin() {
     }
   }
 
+  async function remove(id: string, name: string) {
+    if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+    try {
+      await deleteCategory({ data: { id } });
+      toast.success("Category deleted");
+      qc.invalidateQueries({ queryKey: ["admin-cats"] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed");
+    }
+  }
+
+  async function move(id: string, direction: "up" | "down") {
+    try {
+      await reorderCategory({ data: { id, direction } });
+      qc.invalidateQueries({ queryKey: ["admin-cats"] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed");
+    }
+  }
+
   // Visual row renderer for the tree
   const renderCategoryRow = (c: Category, depth = 0) => {
     const children = childrenMap.get(c.id) || [];
@@ -147,7 +179,21 @@ function CategoriesAdmin() {
               </button>
             </div>
 
-            <div className="w-20 flex justify-end gap-3 pr-2">
+            <div className="w-32 flex justify-end gap-2 pr-2 items-center">
+              <button
+                onClick={() => move(c.id, "up")}
+                className="hover:text-accent p-1 transition-colors"
+                title="Move up"
+              >
+                <ArrowUp className="h-3.5 w-3.5" />
+              </button>
+              <button
+                onClick={() => move(c.id, "down")}
+                className="hover:text-accent p-1 transition-colors"
+                title="Move down"
+              >
+                <ArrowDown className="h-3.5 w-3.5" />
+              </button>
               <button
                 onClick={() =>
                   setEditing({
@@ -165,6 +211,13 @@ function CategoriesAdmin() {
                 title="Edit"
               >
                 <Edit className="h-3.5 w-3.5" />
+              </button>
+              <button
+                onClick={() => remove(c.id, c.name)}
+                className="hover:text-destructive p-1 transition-colors"
+                title="Delete"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
               </button>
             </div>
           </div>
@@ -214,7 +267,7 @@ function CategoriesAdmin() {
               <span className="w-16 text-center">Gender</span>
               <span className="w-16 text-center">Type</span>
               <span className="w-20 text-center">Status</span>
-              <span className="w-20 text-right pr-4">Actions</span>
+              <span className="w-32 text-right pr-4">Actions</span>
             </div>
           </div>
 
