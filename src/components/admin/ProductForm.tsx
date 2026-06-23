@@ -35,6 +35,11 @@ export interface ProductFormValues {
   is_active: boolean;
   meta_title: string;
   meta_description: string;
+  materials: string;
+  care_instructions: string;
+  tags: string[];
+  available_sizes: string[];
+  available_colors: string[];
   images: ImageForm[];
   variants: VariantForm[];
 }
@@ -53,6 +58,11 @@ export function emptyProduct(): ProductFormValues {
     is_active: true,
     meta_title: "",
     meta_description: "",
+    materials: "",
+    care_instructions: "",
+    tags: [],
+    available_sizes: [],
+    available_colors: [],
     images: [],
     variants: [],
   };
@@ -88,6 +98,8 @@ export function ProductForm({ initial }: { initial: ProductFormValues }) {
         sku: form.sku || null,
         meta_title: form.meta_title || null,
         meta_description: form.meta_description || null,
+        materials: form.materials || null,
+        care_instructions: form.care_instructions || null,
         images: form.images.filter((i) => i.image_url),
         variants: form.variants.filter((v) => v.size || v.color),
       };
