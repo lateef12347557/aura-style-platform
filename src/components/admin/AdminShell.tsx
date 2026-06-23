@@ -3,7 +3,6 @@ import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import {
   LayoutDashboard,
   Package,
-  Plus,
   FolderTree,
   ShoppingCart,
   Users,
@@ -15,20 +14,13 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 const NAV: Array<{
-  to:
-    | "/admin"
-    | "/admin/products"
-    | "/admin/products/new"
-    | "/admin/categories"
-    | "/admin/orders"
-    | "/admin/customers";
+  to: "/admin" | "/admin/products" | "/admin/categories" | "/admin/orders" | "/admin/customers";
   label: string;
   icon: typeof LayoutDashboard;
   exact?: boolean;
 }> = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
-  { to: "/admin/products", label: "Products", icon: Package, exact: true },
-  { to: "/admin/products/new", label: "Add Product", icon: Plus },
+  { to: "/admin/products", label: "Products", icon: Package },
   { to: "/admin/categories", label: "Categories", icon: FolderTree },
   { to: "/admin/orders", label: "Orders", icon: ShoppingCart },
   { to: "/admin/customers", label: "Customers", icon: Users },

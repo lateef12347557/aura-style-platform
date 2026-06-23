@@ -167,7 +167,7 @@ export function ShopGrid({
       {categories.length > 0 && (
         <div>
           <h4 className="editorial-eyebrow text-foreground mb-3">Categories</h4>
-          <div className="space-y-1.5 max-h-48 overflow-y-auto pr-2">
+          <div className="space-y-2 max-h-48 overflow-y-auto pr-2">
             <button
               onClick={() => updateParams({ category: undefined })}
               className={`w-full text-left py-1 text-sm flex justify-between items-center transition-colors ${!selectedCategory ? "text-accent font-medium" : "text-muted-foreground hover:text-foreground"}`}
@@ -175,16 +175,35 @@ export function ShopGrid({
               <span>All Categories</span>
               {!selectedCategory && <Check className="h-3.5 w-3.5" />}
             </button>
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => updateParams({ category: cat.slug })}
-                className={`w-full text-left py-1 text-sm flex justify-between items-center transition-colors ${selectedCategory === cat.slug ? "text-accent font-medium" : "text-muted-foreground hover:text-foreground"}`}
-              >
-                <span>{cat.name}</span>
-                {selectedCategory === cat.slug && <Check className="h-3.5 w-3.5" />}
-              </button>
-            ))}
+
+            {categories
+              .filter((c) => !c.parent_id)
+              .map((parent) => (
+                <div key={parent.id} className="mb-1">
+                  <button
+                    onClick={() => updateParams({ category: parent.slug })}
+                    className={`w-full text-left py-1 text-sm flex justify-between items-center transition-colors ${selectedCategory === parent.slug ? "text-accent font-medium" : "text-muted-foreground hover:text-foreground"}`}
+                  >
+                    <span>{parent.name}</span>
+                    {selectedCategory === parent.slug && <Check className="h-3.5 w-3.5" />}
+                  </button>
+
+                  <div className="pl-4 mt-1 space-y-1">
+                    {categories
+                      .filter((c) => c.parent_id === parent.id)
+                      .map((child) => (
+                        <button
+                          key={child.id}
+                          onClick={() => updateParams({ category: child.slug })}
+                          className={`w-full text-left py-1 text-sm flex justify-between items-center transition-colors ${selectedCategory === child.slug ? "text-accent font-medium" : "text-muted-foreground hover:text-foreground"}`}
+                        >
+                          <span className="text-sm">{child.name}</span>
+                          {selectedCategory === child.slug && <Check className="h-3.5 w-3.5" />}
+                        </button>
+                      ))}
+                  </div>
+                </div>
+              ))}
           </div>
         </div>
       )}

@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useCart, cartCount } from "@/store/cart";
 import { useUI } from "@/store/ui";
 import { useAuth } from "@/hooks/use-auth";
+import { useQuery } from "@tanstack/react-query";
+import { listCategories } from "@/lib/categories.functions";
 
 export function Header() {
   const items = useCart((s) => s.items);
@@ -28,29 +30,13 @@ export function Header() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-10 text-sm">
-          <Link
-            to="/shop"
-            className="hover:text-accent transition-colors"
-            activeProps={{ className: "text-accent" }}
-          >
+          <Link to="/shop" className="hover:text-accent transition-colors" activeProps={{ className: "text-accent" }}>
             Shop
           </Link>
-          <Link
-            to="/shop/$gender"
-            params={{ gender: "men" }}
-            className="hover:text-accent transition-colors"
-            activeProps={{ className: "text-accent" }}
-          >
-            Men
-          </Link>
-          <Link
-            to="/shop/$gender"
-            params={{ gender: "women" }}
-            className="hover:text-accent transition-colors"
-            activeProps={{ className: "text-accent" }}
-          >
-            Women
-          </Link>
+
+          {/* Men/Women dropdowns with categories */}
+          <CategoriesDropdown genderFilter="male" label="Men" />
+          <CategoriesDropdown genderFilter="female" label="Women" />
         </nav>
 
         <div className="flex items-center gap-1">
@@ -107,5 +93,36 @@ export function Header() {
         </nav>
       )}
     </header>
+  );
+}
+
+function CategoriesDropdown({ genderFilter, label }: { genderFilter: "male" | "female"; label: string }) {
+  const query = useQuery({ queryKey: ["categories", genderFilter], queryFn: () => listCategories() });
+  const categories = (query.data ?? []).filter((c: any) => c.gender === genderFilter || c.gender === "unisex");
+  const roots = categories.filter((c: any) => !c.parent_id);
+  return (
+    <div className="relative group">
+      <Link to="/shop/$gender" params={{ gender: label.toLowerCase() }} className="hover:text-accent transition-colors">
+        {label}
+      </Link>
+      <div className="absolute left-0 top-full mt-3 hidden group-hover:block w-56 bg-background border border-border rounded-md shadow-lg p-4">
+        {roots.map((r: any) => (
+          <div key={r.id} className="mb-3">
+            <Link to="/shop/$gender" params={{ gender: label.toLowerCase() }} className="block font-medium hover:text-accent">
+              {r.name}
+            </Link>
+            <div className="mt-1 pl-3 text-sm text-muted-foreground">
+              {categories.filter((c: any) => c.parent_id === r.id).map((s: any) => (
+                <div key={s.id}>
+                  <Link to="/shop/$gender" params={{ gender: label.toLowerCase() }} className="block hover:text-accent">
+                    {s.name}
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
