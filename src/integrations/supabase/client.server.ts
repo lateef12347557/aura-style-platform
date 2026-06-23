@@ -42,8 +42,21 @@ function createSupabaseAdminClient() {
       ...(!SUPABASE_SERVICE_ROLE_KEY ? ["SUPABASE_SERVICE_ROLE_KEY"] : []),
     ];
     const message = `Missing Supabase environment variable(s): ${missing.join(", ")}. Connect Supabase in Lovable Cloud.`;
-    console.error(`[Supabase] ${message}`);
-    throw new Error(message);
+    console.warn(`[Supabase] ${message}`);
+    
+    // Return a dummy proxy client that only throws when queries/calls are executed
+    return new Proxy({} as any, {
+      get(_, prop) {
+        return new Proxy(() => {}, {
+          apply() {
+            throw new Error(message);
+          },
+          get(_, nestedProp) {
+            throw new Error(message);
+          }
+        });
+      }
+    });
   }
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
