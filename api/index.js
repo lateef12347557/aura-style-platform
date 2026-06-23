@@ -33,7 +33,7 @@ export default async function handler(req, res) {
   try {
     const request = await nodeRequestToWebRequest(req);
     const env = process.env;
-    const response = await serverModule.default.fetch(request, env, undefined);
+    const response = await serverModule.fetch(request, env, undefined);
 
     res.statusCode = response.status;
     response.headers.forEach((value, key) => res.setHeader(key, value));
