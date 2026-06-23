@@ -18,8 +18,22 @@ export function useAuth(): AuthState {
     const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
       setSession(s);
     });
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
+    supabase.auth.getSession().then(async ({ data }) => {
+      const sess = data.session;
+      setSession(sess);
+      if (sess?.user) {
+        try {
+          const { data: roleData } = await supabase
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", sess.user.id)
+            .eq("role", "admin")
+            .maybeSingle();
+          setIsAdmin(!!roleData);
+        } catch (e) {
+          console.error("Failed to check admin role during session load", e);
+        }
+      }
       setLoading(false);
     });
     return () => sub.subscription.unsubscribe();

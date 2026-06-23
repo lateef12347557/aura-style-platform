@@ -54,7 +54,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen flex bg-secondary">
       <aside className="w-60 bg-sidebar text-sidebar-foreground flex flex-col">
         <div className="px-6 py-6 border-b border-sidebar-border">
-          <div className="font-display tracking-[0.3em] text-sm">ATELIER</div>
+          <div className="font-display tracking-[0.3em] text-sm">MDCLASSIC WEARS</div>
           <div className="editorial-eyebrow opacity-60 mt-1">Admin</div>
         </div>
         <nav className="flex-1 px-3 py-4 space-y-1">

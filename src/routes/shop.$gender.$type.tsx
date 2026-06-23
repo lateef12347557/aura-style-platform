@@ -10,9 +10,9 @@ export const Route = createFileRoute("/shop/$gender/$type")({
     const label = `${params.gender === "men" ? "Men" : "Women"}'s ${params.type === "shoes" ? "Shoes" : "Clothing"}`;
     return {
       meta: [
-        { title: `${label} — ATELIER` },
-        { name: "description", content: `Shop ${label.toLowerCase()} from ATELIER.` },
-        { property: "og:title", content: `${label} — ATELIER` },
+        { title: `${label} — MDCLASSIC WEARS` },
+        { name: "description", content: `Shop ${label.toLowerCase()} from MDCLASSIC WEARS.` },
+        { property: "og:title", content: `${label} — MDCLASSIC WEARS` },
         { property: "og:url", content: `/shop/${params.gender}/${params.type}` },
       ],
       links: [{ rel: "canonical", href: `/shop/${params.gender}/${params.type}` }],

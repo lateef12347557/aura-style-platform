@@ -6,12 +6,12 @@ export const Route = createFileRoute("/shop/$gender/")({
     const label = params.gender === "men" ? "Men" : "Women";
     return {
       meta: [
-        { title: `${label} — ATELIER` },
+        { title: `${label} — MDCLASSIC WEARS` },
         {
           name: "description",
           content: `${label}'s collection: hand-finished shoes and ready-to-wear.`,
         },
-        { property: "og:title", content: `${label} — ATELIER` },
+        { property: "og:title", content: `${label} — MDCLASSIC WEARS` },
         { property: "og:url", content: `/shop/${params.gender}` },
       ],
       links: [{ rel: "canonical", href: `/shop/${params.gender}` }],

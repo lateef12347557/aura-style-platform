@@ -87,7 +87,7 @@ export const listAdminOrders = createServerFn({ method: "GET" })
     if (!adminCheck) throw new Error("Forbidden");
     const { data, error } = await context.supabase
       .from("orders")
-      .select("id, status, total_amount, created_at, user_id")
+      .select("id, status, total_amount, created_at, user_id, shipping_address")
       .order("created_at", { ascending: false })
       .limit(200);
     if (error) throw new Error(error.message);

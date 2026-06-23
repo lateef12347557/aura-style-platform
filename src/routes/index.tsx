@@ -13,12 +13,12 @@ import { subscribeNewsletter } from "@/lib/newsletter.functions";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "ATELIER — Premium shoes & ready-to-wear" },
+      { title: "MDCLASSIC WEARS — Premium shoes & ready-to-wear" },
       {
         name: "description",
         content: "Editorial fashion. Hand-finished shoes and ready-to-wear for men and women.",
       },
-      { property: "og:title", content: "ATELIER — Premium shoes & ready-to-wear" },
+      { property: "og:title", content: "MDCLASSIC WEARS — Premium shoes & ready-to-wear" },
       {
         property: "og:description",
         content: "Editorial fashion. Hand-finished shoes and ready-to-wear.",

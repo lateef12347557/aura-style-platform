@@ -11,7 +11,7 @@ import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/_authenticated/account")({
   head: () => ({
-    meta: [{ title: "My account — ATELIER" }, { name: "robots", content: "noindex" }],
+    meta: [{ title: "My account — MDCLASSIC WEARS" }, { name: "robots", content: "noindex" }],
   }),
   component: Account,
 });

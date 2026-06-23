@@ -94,7 +94,25 @@ export const listProducts = createServerFn({ method: "GET" })
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
 
-    let result = (rows ?? []) as any[];
+    interface ReviewRating {
+      rating: number;
+    }
+    interface ProductQueryResult {
+      id: string;
+      name: string;
+      slug: string;
+      price: number;
+      compare_price: number | null;
+      is_featured: boolean;
+      created_at: string;
+      category: unknown;
+      images: unknown;
+      variants: unknown;
+      reviews: ReviewRating[] | null;
+      avgRating?: number;
+    }
+
+    let result = (rows ?? []) as unknown as ProductQueryResult[];
 
     // If sorting by best_rated, compute average rating and sort in JavaScript
     if (data.sort === "best_rated") {
@@ -102,11 +120,11 @@ export const listProducts = createServerFn({ method: "GET" })
         .map((row) => {
           const revs = row.reviews ?? [];
           const avg = revs.length
-            ? revs.reduce((sum: number, r: any) => sum + r.rating, 0) / revs.length
+            ? revs.reduce((sum: number, r: ReviewRating) => sum + r.rating, 0) / revs.length
             : 0;
           return { ...row, avgRating: avg };
         })
-        .sort((a, b) => b.avgRating - a.avgRating);
+        .sort((a, b) => (b.avgRating ?? 0) - (a.avgRating ?? 0));
     }
 
     return result;

@@ -78,18 +78,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "ATELIER — Premium shoes & clothing" },
+      { title: "MDCLASSIC WEARS — Premium shoes & clothing" },
       {
         name: "description",
         content: "Editorial fashion. Hand-finished shoes and ready-to-wear for men and women.",
       },
-      { name: "author", content: "ATELIER" },
-      { property: "og:title", content: "ATELIER" },
+      { name: "author", content: "MDCLASSIC WEARS" },
+      { property: "og:title", content: "MDCLASSIC WEARS" },
       {
         property: "og:description",
         content: "Editorial fashion. Hand-finished shoes and ready-to-wear.",
       },
-      { property: "og:site_name", content: "ATELIER" },
+      { property: "og:site_name", content: "MDCLASSIC WEARS" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

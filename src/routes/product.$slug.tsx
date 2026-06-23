@@ -24,12 +24,13 @@ export const Route = createFileRoute("/product/$slug")({
     const p = loaderData?.product;
     return {
       meta: [
-        { title: p ? `${p.name} — ATELIER` : "ATELIER" },
+        { title: p ? `${p.name} — MDCLASSIC WEARS` : "MDCLASSIC WEARS" },
         {
           name: "description",
-          content: p?.meta_description || p?.description?.slice(0, 160) || "ATELIER product",
+          content:
+            p?.meta_description || p?.description?.slice(0, 160) || "MDCLASSIC WEARS product",
         },
-        { property: "og:title", content: p?.name ?? "ATELIER" },
+        { property: "og:title", content: p?.name ?? "MDCLASSIC WEARS" },
         { property: "og:type", content: "product" },
         { property: "og:url", content: `/product/${params.slug}` },
         ...(p?.images?.[0]?.image_url

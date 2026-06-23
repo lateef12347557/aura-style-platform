@@ -24,7 +24,7 @@ export function Header() {
         </button>
 
         <Link to="/" className="font-display text-xl tracking-[0.3em] font-medium">
-          ATELIER
+          MDCLASSIC WEARS
         </Link>
 
         <nav className="hidden md:flex items-center gap-10 text-sm">
@@ -63,7 +63,7 @@ export function Header() {
             </Link>
           )}
           <Link
-            to={user ? "/account" : "/auth"}
+            to={user ? (isAdmin ? "/admin" : "/account") : "/auth"}
             className="p-2 hover:text-accent"
             aria-label="Account"
           >

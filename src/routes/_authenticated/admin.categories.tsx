@@ -20,7 +20,7 @@ interface Category {
   id: string;
   name: string;
   slug: string;
-  gender: "male" | "female" | "unisex";
+  gender: "male" | "female";
   type: "shoes" | "clothing";
   parent_id: string | null;
   image_url: string | null;
@@ -39,7 +39,7 @@ function CategoriesAdmin() {
     id?: string;
     name: string;
     slug: string;
-    gender: "male" | "female" | "unisex";
+    gender: "male" | "female";
     type: "shoes" | "clothing";
     parent_id: string | null;
     image_url: string;
@@ -190,7 +190,7 @@ function CategoriesAdmin() {
             setEditing({
               name: "",
               slug: "",
-              gender: "unisex",
+              gender: "male",
               type: "clothing",
               parent_id: null,
               image_url: "",
@@ -265,14 +265,16 @@ function CategoriesAdmin() {
               <Select
                 label="Gender"
                 value={editing.gender}
-                options={["male", "female", "unisex"]}
-                onChange={(v) => setEditing({ ...editing, gender: v as any })}
+                options={["male", "female"]}
+                onChange={(v) =>
+                  setEditing({ ...editing, gender: v as "male" | "female" })
+                }
               />
               <Select
                 label="Type"
                 value={editing.type}
                 options={["shoes", "clothing"]}
-                onChange={(v) => setEditing({ ...editing, type: v as any })}
+                onChange={(v) => setEditing({ ...editing, type: v as "shoes" | "clothing" })}
               />
             </div>
 

@@ -4,12 +4,13 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { StoreLayout } from "@/components/store/StoreLayout";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — ATELIER" },
-      { name: "description", content: "Sign in or create an ATELIER account." },
+      { title: "Sign in — MDCLASSIC WEARS" },
+      { name: "description", content: "Sign in or create an MDCLASSIC WEARS account." },
     ],
     links: [{ rel: "canonical", href: "/auth" }],
   }),
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { user, isAdmin, loading } = useAuth();
   const [mode, setMode] = useState<"sign-in" | "sign-up">("sign-in");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,10 +27,15 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/account" });
-    });
-  }, [navigate]);
+    if (loading) return;
+    if (user) {
+      if (isAdmin) {
+        navigate({ to: "/admin" });
+      } else {
+        navigate({ to: "/account" });
+      }
+    }
+  }, [user, isAdmin, loading, navigate]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -42,11 +49,25 @@ function AuthPage() {
         });
         if (error) throw error;
         toast.success("Account created.");
+        // Mode sign-up defaults to standard customer, so navigate to /account
         navigate({ to: "/account" });
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error, data } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Welcome back.");
+
+        if (data?.user) {
+          const { data: roleData } = await supabase
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", data.user.id)
+            .eq("role", "admin")
+            .maybeSingle();
+          if (roleData) {
+            navigate({ to: "/admin" });
+            return;
+          }
+        }
         navigate({ to: "/account" });
       }
     } catch (err) {
@@ -66,7 +87,7 @@ function AuthPage() {
         return;
       }
       if (result.redirected) return;
-      navigate({ to: "/account" });
+      // Google OAuth callback state will trigger useAuth update on load
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Google sign-in failed");
     }

@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate, useSearch } from "@tanstack/react-router";
+import type { ShopSearchParams } from "@/routes/shop";
 import { listProducts } from "@/lib/products.functions";
 import { listCategories } from "@/lib/categories.functions";
 import { ProductCard, primaryImage } from "./ProductCard";
@@ -26,7 +27,8 @@ export function ShopGrid({
 }) {
   const navigate = useNavigate();
   // Get URL search parameters with strict: false so it works across nested routes
-  const searchParams = useSearch({ strict: false }) as any;
+  const searchParams = useSearch({ strict: false }) as unknown as ShopSearchParams;
+
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   const sort = searchParams.sort || "newest";
@@ -83,10 +85,10 @@ export function ShopGrid({
       }),
   });
 
-  function updateParams(newParams: Record<string, any>) {
+  function updateParams(newParams: Partial<ShopSearchParams>) {
     navigate({
-      search: ((prev: any) => {
-        const next = { ...prev, ...newParams };
+      search: (prev) => {
+        const next = { ...prev, ...newParams } as Record<string, unknown>;
         // Clean up empty params
         Object.keys(next).forEach((key) => {
           if (
@@ -99,7 +101,7 @@ export function ShopGrid({
           }
         });
         return next;
-      }) as any,
+      },
     });
   }
 

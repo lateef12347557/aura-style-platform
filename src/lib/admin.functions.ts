@@ -13,7 +13,9 @@ export const getAdminOverview = createServerFn({ method: "GET" })
 
     const [{ data: orders }, { count: productCount }, { count: customerCount }] = await Promise.all(
       [
-        context.supabase.from("orders").select("id,total_amount,created_at,status,user_id"),
+        context.supabase
+          .from("orders")
+          .select("id,total_amount,created_at,status,user_id,shipping_address"),
         context.supabase
           .from("products")
           .select("id", { count: "exact", head: true })

@@ -103,13 +103,27 @@ function ProductsAdmin() {
         is_active: false, // Defaults to draft
         meta_title: p.meta_title ? `${p.meta_title} (Copy)` : null,
         meta_description: p.meta_description,
-        images: (p.images ?? []).map((img: any) => ({
+        images: (
+          (p.images ?? []) as Array<{
+            image_url: string;
+            alt_text: string | null;
+            is_primary: boolean;
+            display_order: number;
+          }>
+        ).map((img) => ({
           image_url: img.image_url,
           alt_text: img.alt_text,
           is_primary: img.is_primary,
           display_order: img.display_order,
         })),
-        variants: (p.variants ?? []).map((v: any) => ({
+        variants: (
+          (p.variants ?? []) as Array<{
+            size: string | null;
+            color: string | null;
+            stock_quantity: number;
+            price_modifier: number | string;
+          }>
+        ).map((v) => ({
           size: v.size,
           color: v.color,
           stock_quantity: v.stock_quantity,

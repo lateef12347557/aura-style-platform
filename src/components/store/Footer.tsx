@@ -5,7 +5,7 @@ export function Footer() {
     <footer className="mt-32 border-t border-border bg-primary text-primary-foreground">
       <div className="mx-auto max-w-screen-2xl px-4 md:px-8 py-16 grid gap-12 md:grid-cols-4">
         <div>
-          <div className="font-display text-xl tracking-[0.3em]">ATELIER</div>
+          <div className="font-display text-xl tracking-[0.3em]">MDCLASSIC WEARS</div>
           <p className="mt-4 text-sm opacity-70 max-w-xs">
             Editorial fashion. Hand-finished shoes and ready-to-wear, made in small batches.
           </p>
@@ -46,7 +46,7 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-white/10 text-xs text-center py-6 opacity-60">
-        © {new Date().getFullYear()} ATELIER. All rights reserved.
+        © {new Date().getFullYear()} MDCLASSIC WEARS. All rights reserved.
       </div>
     </footer>
   );

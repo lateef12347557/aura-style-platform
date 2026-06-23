@@ -134,11 +134,22 @@ export function ProductForm({ initial }: { initial: ProductFormValues }) {
               className="inp"
             >
               <option value="">Select…</option>
-              {(cats.data ?? []).map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name} ({c.gender}/{c.type})
-                </option>
-              ))}
+              {(() => {
+                const categories = cats.data ?? [];
+                const parents = categories.filter((c) => !c.parent_id);
+                return parents.map((parent) => {
+                  const children = categories.filter((c) => c.parent_id === parent.id);
+                  return (
+                    <optgroup key={parent.id} label={parent.name}>
+                      {children.map((child) => (
+                        <option key={child.id} value={child.id}>
+                          {child.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                  );
+                });
+              })()}
             </select>
           </Field>
         </div>

@@ -39,6 +39,7 @@ function OrdersAdmin() {
             <thead className="text-xs uppercase text-muted-foreground border-b border-border">
               <tr>
                 <th className="text-left p-3">Order</th>
+                <th className="text-left">Customer</th>
                 <th className="text-left">Date</th>
                 <th className="text-left">Status</th>
                 <th className="text-right">Total</th>
@@ -46,8 +47,8 @@ function OrdersAdmin() {
             </thead>
             <tbody className="divide-y divide-border">
               {filtered.map((o) => (
-                <tr key={o.id}>
-                  <td className="p-3">
+                <tr key={o.id} className="hover:bg-muted/30">
+                  <td className="p-3 font-medium">
                     <Link
                       to="/admin/orders/$id"
                       params={{ id: o.id }}
@@ -56,11 +57,18 @@ function OrdersAdmin() {
                       #{o.id.slice(0, 8).toUpperCase()}
                     </Link>
                   </td>
+                  <td>
+                    {o.shipping_address &&
+                    typeof o.shipping_address === "object" &&
+                    "full_name" in o.shipping_address
+                      ? ((o.shipping_address as { full_name?: string }).full_name ?? "—")
+                      : "—"}
+                  </td>
                   <td>{formatDate(o.created_at)}</td>
                   <td>
                     <StatusBadge status={o.status} />
                   </td>
-                  <td className="text-right">{formatPrice(o.total_amount)}</td>
+                  <td className="text-right font-medium">{formatPrice(o.total_amount)}</td>
                 </tr>
               ))}
               {filtered.length === 0 && (
