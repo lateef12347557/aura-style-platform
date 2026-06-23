@@ -50,8 +50,14 @@ async function runSeed() {
     await supabase.from("reviews").delete().neq("id", "00000000-0000-0000-0000-000000000000");
     await supabase.from("order_items").delete().neq("id", "00000000-0000-0000-0000-000000000000");
     await supabase.from("orders").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-    await supabase.from("product_variants").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-    await supabase.from("product_images").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+    await supabase
+      .from("product_variants")
+      .delete()
+      .neq("id", "00000000-0000-0000-0000-000000000000");
+    await supabase
+      .from("product_images")
+      .delete()
+      .neq("id", "00000000-0000-0000-0000-000000000000");
     await supabase.from("products").delete().neq("id", "00000000-0000-0000-0000-000000000000");
     await supabase.from("categories").delete().neq("id", "00000000-0000-0000-0000-000000000000");
     console.log("Database catalog cleared.");

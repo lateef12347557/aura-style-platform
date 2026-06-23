@@ -19,7 +19,11 @@ export function ProductCard({
   categoryName,
 }: ProductCardProps) {
   return (
-    <Link to="/product/$slug" params={{ slug }} className="group block rounded-lg overflow-hidden bg-transparent transition-shadow hover:shadow-card">
+    <Link
+      to="/product/$slug"
+      params={{ slug }}
+      className="group block rounded-lg overflow-hidden bg-transparent transition-shadow hover:shadow-card"
+    >
       <div className="relative aspect-[4/5] bg-muted overflow-hidden">
         {image ? (
           <img

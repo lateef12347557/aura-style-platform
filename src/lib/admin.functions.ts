@@ -171,12 +171,24 @@ export const seedCatalogFromAdmin = createServerFn({ method: "POST" })
 
     // Clean up
     await supabaseAdmin.from("reviews").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-    await supabaseAdmin.from("order_items").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+    await supabaseAdmin
+      .from("order_items")
+      .delete()
+      .neq("id", "00000000-0000-0000-0000-000000000000");
     await supabaseAdmin.from("orders").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-    await supabaseAdmin.from("product_variants").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-    await supabaseAdmin.from("product_images").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+    await supabaseAdmin
+      .from("product_variants")
+      .delete()
+      .neq("id", "00000000-0000-0000-0000-000000000000");
+    await supabaseAdmin
+      .from("product_images")
+      .delete()
+      .neq("id", "00000000-0000-0000-0000-000000000000");
     await supabaseAdmin.from("products").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-    await supabaseAdmin.from("categories").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+    await supabaseAdmin
+      .from("categories")
+      .delete()
+      .neq("id", "00000000-0000-0000-0000-000000000000");
 
     // Seed categories
     const categories = [
@@ -712,4 +724,3 @@ export const seedCatalogFromAdmin = createServerFn({ method: "POST" })
 
     return { ok: true };
   });
-

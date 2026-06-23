@@ -8,8 +8,20 @@ import {
   listAllCategories,
   upsertCategory,
   toggleCategoryActive,
+  reorderCategories,
 } from "@/lib/categories.functions";
-import { ChevronRight, Folder, FolderOpen, Edit, Trash2, Eye, EyeOff, Upload } from "lucide-react";
+import {
+  ChevronRight,
+  Folder,
+  FolderOpen,
+  Edit,
+  Trash2,
+  Eye,
+  EyeOff,
+  Upload,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin/categories")({
@@ -20,12 +32,14 @@ interface Category {
   id: string;
   name: string;
   slug: string;
-  gender: "male" | "female";
+  gender: "male" | "female" | "unisex";
   type: "shoes" | "clothing";
   parent_id: string | null;
   image_url: string | null;
   is_active: boolean;
   display_order: number;
+  meta_title: string | null;
+  meta_description: string | null;
 }
 
 function CategoriesAdmin() {
@@ -39,11 +53,14 @@ function CategoriesAdmin() {
     id?: string;
     name: string;
     slug: string;
-    gender: "male" | "female";
+    gender: "male" | "female" | "unisex";
     type: "shoes" | "clothing";
     parent_id: string | null;
     image_url: string;
     is_active: boolean;
+    display_order: number;
+    meta_title: string;
+    meta_description: string;
   } | null>(null);
 
   // Group categories into parent -> children tree structure
@@ -61,6 +78,11 @@ function CategoriesAdmin() {
         childrenMap.set(cat.parent_id, list);
       }
     });
+
+    roots.sort((a, b) => a.display_order - b.display_order);
+    for (const list of childrenMap.values()) {
+      list.sort((a, b) => a.display_order - b.display_order);
+    }
 
     return { roots, childrenMap };
   }, [data]);
@@ -91,6 +113,32 @@ function CategoriesAdmin() {
       toast.success("Category status updated");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed");
+    }
+  }
+
+  async function moveCategory(category: Category, direction: "up" | "down") {
+    const categories = (data ?? []) as Category[];
+    const siblings = categories
+      .filter((c) => c.parent_id === category.parent_id)
+      .sort((a, b) => a.display_order - b.display_order);
+    const index = siblings.findIndex((c) => c.id === category.id);
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= siblings.length) return;
+
+    const target = siblings[targetIndex];
+    try {
+      await reorderCategories({
+        data: {
+          updates: [
+            { id: category.id, display_order: target.display_order },
+            { id: target.id, display_order: category.display_order },
+          ],
+        },
+      });
+      qc.invalidateQueries({ queryKey: ["admin-cats"] });
+      toast.success("Category order updated");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to update order");
     }
   }
 
@@ -147,7 +195,21 @@ function CategoriesAdmin() {
               </button>
             </div>
 
-            <div className="w-20 flex justify-end gap-3 pr-2">
+            <div className="w-32 flex justify-end gap-2 pr-2">
+              <button
+                onClick={() => moveCategory(c, "up")}
+                className="hover:text-accent p-1 transition-colors"
+                title="Move up"
+              >
+                <ArrowUp className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => moveCategory(c, "down")}
+                className="hover:text-accent p-1 transition-colors"
+                title="Move down"
+              >
+                <ArrowDown className="h-4 w-4" />
+              </button>
               <button
                 onClick={() =>
                   setEditing({
@@ -159,6 +221,9 @@ function CategoriesAdmin() {
                     parent_id: c.parent_id,
                     image_url: c.image_url ?? "",
                     is_active: c.is_active,
+                    display_order: c.display_order,
+                    meta_title: c.meta_title ?? "",
+                    meta_description: c.meta_description ?? "",
                   })
                 }
                 className="hover:text-foreground p-1 transition-colors"
@@ -195,6 +260,9 @@ function CategoriesAdmin() {
               parent_id: null,
               image_url: "",
               is_active: true,
+              display_order: 0,
+              meta_title: "",
+              meta_description: "",
             })
           }
           className="bg-primary text-primary-foreground px-4 py-2 text-sm uppercase tracking-wider font-medium hover:bg-accent transition-colors"
@@ -265,9 +333,9 @@ function CategoriesAdmin() {
               <Select
                 label="Gender"
                 value={editing.gender}
-                options={["male", "female"]}
+                options={["male", "female", "unisex"]}
                 onChange={(v) =>
-                  setEditing({ ...editing, gender: v as "male" | "female" })
+                  setEditing({ ...editing, gender: v as "male" | "female" | "unisex" })
                 }
               />
               <Select
@@ -346,6 +414,32 @@ function CategoriesAdmin() {
                   />
                 </label>
               </div>
+            </div>
+
+            <div>
+              <Input
+                label="SEO Title"
+                value={editing.meta_title}
+                onChange={(v) => setEditing({ ...editing, meta_title: v })}
+              />
+            </div>
+            <div>
+              <label className="editorial-eyebrow text-muted-foreground text-xs">
+                SEO Description
+              </label>
+              <textarea
+                value={editing.meta_description}
+                onChange={(e) => setEditing({ ...editing, meta_description: e.target.value })}
+                rows={3}
+                className="w-full mt-1 border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:border-accent resize-none"
+              />
+            </div>
+            <div>
+              <Input
+                label="Display Order"
+                value={String(editing.display_order)}
+                onChange={(v) => setEditing({ ...editing, display_order: Number(v) })}
+              />
             </div>
 
             <div className="flex gap-2 justify-end pt-4 border-t border-border mt-6">

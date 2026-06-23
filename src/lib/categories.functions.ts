@@ -47,6 +47,8 @@ const CategoryUpsert = z.object({
   image_url: z.string().url().nullable().optional(),
   is_active: z.boolean().default(true),
   display_order: z.number().int().default(0),
+  meta_title: z.string().max(150).nullable().optional(),
+  meta_description: z.string().max(300).nullable().optional(),
 });
 
 export const upsertCategory = createServerFn({ method: "POST" })
@@ -90,6 +92,28 @@ export const toggleCategoryActive = createServerFn({ method: "POST" })
       .from("categories")
       .update({ is_active: data.is_active })
       .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const reorderCategories = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        updates: z.array(z.object({ id: z.string().uuid(), display_order: z.number().int() })),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: adminCheck } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (!adminCheck) throw new Error("Forbidden");
+    const { error } = await context.supabase.from("categories").upsert(data.updates, {
+      onConflict: "id",
+    });
     if (error) throw new Error(error.message);
     return { ok: true };
   });

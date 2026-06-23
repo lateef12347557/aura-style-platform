@@ -7,6 +7,13 @@ import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
 import { listCategories } from "@/lib/categories.functions";
 
+type Category = {
+  id: string;
+  name: string;
+  gender: "male" | "female" | "unisex";
+  parent_id: string | null;
+};
+
 export function Header() {
   const items = useCart((s) => s.items);
   const setCartOpen = useUI((s) => s.setCartOpen);
@@ -30,7 +37,11 @@ export function Header() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-10 text-sm">
-          <Link to="/shop" className="hover:text-accent transition-colors" activeProps={{ className: "text-accent" }}>
+          <Link
+            to="/shop"
+            className="hover:text-accent transition-colors"
+            activeProps={{ className: "text-accent" }}
+          >
             Shop
           </Link>
 
@@ -96,29 +107,54 @@ export function Header() {
   );
 }
 
-function CategoriesDropdown({ genderFilter, label }: { genderFilter: "male" | "female"; label: string }) {
-  const query = useQuery({ queryKey: ["categories", genderFilter], queryFn: () => listCategories() });
-  const categories = (query.data ?? []).filter((c: any) => c.gender === genderFilter || c.gender === "unisex");
-  const roots = categories.filter((c: any) => !c.parent_id);
+function CategoriesDropdown({
+  genderFilter,
+  label,
+}: {
+  genderFilter: "male" | "female";
+  label: string;
+}) {
+  const query = useQuery<Category[], Error>({
+    queryKey: ["categories", genderFilter],
+    queryFn: () => listCategories(),
+  });
+  const categories = (query.data ?? []).filter(
+    (c) => c.gender === genderFilter || c.gender === "unisex",
+  );
+  const roots = categories.filter((c) => !c.parent_id);
   return (
     <div className="relative group">
-      <Link to="/shop/$gender" params={{ gender: label.toLowerCase() }} className="hover:text-accent transition-colors">
+      <Link
+        to="/shop/$gender"
+        params={{ gender: label.toLowerCase() }}
+        className="hover:text-accent transition-colors"
+      >
         {label}
       </Link>
       <div className="absolute left-0 top-full mt-3 hidden group-hover:block w-56 bg-background border border-border rounded-md shadow-lg p-4">
-        {roots.map((r: any) => (
+        {roots.map((r) => (
           <div key={r.id} className="mb-3">
-            <Link to="/shop/$gender" params={{ gender: label.toLowerCase() }} className="block font-medium hover:text-accent">
+            <Link
+              to="/shop/$gender"
+              params={{ gender: label.toLowerCase() }}
+              className="block font-medium hover:text-accent"
+            >
               {r.name}
             </Link>
             <div className="mt-1 pl-3 text-sm text-muted-foreground">
-              {categories.filter((c: any) => c.parent_id === r.id).map((s: any) => (
-                <div key={s.id}>
-                  <Link to="/shop/$gender" params={{ gender: label.toLowerCase() }} className="block hover:text-accent">
-                    {s.name}
-                  </Link>
-                </div>
-              ))}
+              {categories
+                .filter((c) => c.parent_id === r.id)
+                .map((s) => (
+                  <div key={s.id}>
+                    <Link
+                      to="/shop/$gender"
+                      params={{ gender: label.toLowerCase() }}
+                      className="block hover:text-accent"
+                    >
+                      {s.name}
+                    </Link>
+                  </div>
+                ))}
             </div>
           </div>
         ))}

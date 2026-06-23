@@ -22,7 +22,7 @@ function AdminOverview() {
   async function handleSync() {
     if (
       !confirm(
-        "Are you sure you want to clean and seed the database? This will clear old categories and products and load the clean MDCLASSIC WEARS categories (Male & Female) and products."
+        "Are you sure you want to clean and seed the database? This will clear old categories and products and load the clean MDCLASSIC WEARS categories (Male & Female) and products.",
       )
     )
       return;

@@ -43,9 +43,9 @@ function createSupabaseAdminClient() {
     ];
     const message = `Missing Supabase environment variable(s): ${missing.join(", ")}. Connect Supabase in Lovable Cloud.`;
     console.warn(`[Supabase] ${message}`);
-    
+
     // Return a dummy proxy client that only throws when queries/calls are executed
-    return new Proxy({} as any, {
+    return new Proxy({} as unknown as ReturnType<typeof createSupabaseAdminClient>, {
       get(_, prop) {
         return new Proxy(() => {}, {
           apply() {
@@ -53,9 +53,9 @@ function createSupabaseAdminClient() {
           },
           get(_, nestedProp) {
             throw new Error(message);
-          }
+          },
         });
-      }
+      },
     });
   }
 

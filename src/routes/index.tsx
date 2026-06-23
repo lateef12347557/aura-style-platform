@@ -56,12 +56,17 @@ function Home() {
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: 'easeOut' }}
+            transition={{ duration: 0.9, ease: "easeOut" }}
             className="max-w-2xl text-white"
           >
             <div className="editorial-eyebrow text-white/75 mb-4">Spring / Summer · Volume 04</div>
-            <h1 className="hero-title text-5xl md:text-6xl lg:text-7xl mb-6">Quiet luxury, considered cuts.</h1>
-            <p className="text-lg text-white/90 max-w-lg mb-8">A studied edit of footwear and ready-to-wear, made in small batches with attention to detail.</p>
+            <h1 className="hero-title text-5xl md:text-6xl lg:text-7xl mb-6">
+              Quiet luxury, considered cuts.
+            </h1>
+            <p className="text-lg text-white/90 max-w-lg mb-8">
+              A studied edit of footwear and ready-to-wear, made in small batches with attention to
+              detail.
+            </p>
             <div className="flex gap-4">
               <Link
                 to="/shop/$gender"
