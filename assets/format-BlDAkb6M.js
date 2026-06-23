@@ -1,0 +1,1 @@
+function e(e){let t=typeof e==`string`?Number(e):e;return new Intl.NumberFormat(`en-US`,{style:`currency`,currency:`USD`,minimumFractionDigits:2}).format(Number.isFinite(t)?t:0)}function t(e){return new Date(e).toLocaleDateString(`en-US`,{year:`numeric`,month:`short`,day:`numeric`})}export{e as n,t};

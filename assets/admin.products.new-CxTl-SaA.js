@@ -1,0 +1,1 @@
+import{o as e}from"./useStore-sVuN1AwT.js";import{t}from"./AdminShell-CEsbXpVt.js";import{n,t as r}from"./ProductForm-gYBi3s2M.js";var i=e(),a=()=>(0,i.jsx)(t,{title:`New product`,eyebrow:`Catalog`,children:(0,i.jsx)(r,{initial:n()})});export{a as component};

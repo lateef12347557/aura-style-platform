@@ -1,0 +1,1 @@
+import{o as e}from"./useStore-sVuN1AwT.js";import{a as t}from"./index-1GgNovMr.js";import{t as n}from"./ShopGrid-Zy4V22hd.js";var r=e();function i(){let{gender:e,type:i}=t.useParams();return(0,r.jsx)(n,{title:`${e===`men`?`Men`:`Women`}'s ${i===`shoes`?`Shoes`:`Clothing`}`,eyebrow:`Collection`,gender:e===`men`?`male`:`female`,type:i})}export{i as component};

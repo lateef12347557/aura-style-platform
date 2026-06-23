@@ -1,0 +1,1 @@
+import{o as e}from"./useStore-sVuN1AwT.js";import{t}from"./ShopGrid-Zy4V22hd.js";var n=e(),r=()=>(0,n.jsx)(t,{title:`All`,eyebrow:`The full edit`});export{r as component};

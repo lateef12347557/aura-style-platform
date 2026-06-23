@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "vercel-build": "vite build",
+    "postbuild": "node scripts/copy-vercel-static.js",
+    "vercel-build": "vite build && node scripts/copy-vercel-static.js",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
