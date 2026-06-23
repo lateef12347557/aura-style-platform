@@ -180,6 +180,11 @@ const ProductUpsert = z.object({
   is_active: z.boolean().default(true),
   meta_title: z.string().max(200).optional().nullable(),
   meta_description: z.string().max(500).optional().nullable(),
+  materials: z.string().max(500).optional().nullable(),
+  care_instructions: z.string().max(1000).optional().nullable(),
+  tags: z.array(z.string().max(40)).default([]),
+  available_sizes: z.array(z.string().max(20)).default([]),
+  available_colors: z.array(z.string().max(30)).default([]),
   images: z
     .array(
       z.object({
