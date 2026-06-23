@@ -4,5 +4,11 @@
     "api/**/*.js": {
       "runtime": "nodejs18.x"
     }
-  }
+  },
+  "routes": [
+    { "src": "/assets/(.*)", "dest": "/dist/client/assets/$1" },
+    { "src": "/robots.txt", "dest": "/dist/client/robots.txt" },
+    { "handle": "filesystem" },
+    { "src": "/.*", "dest": "/api/index.js" }
+  ]
 }
