@@ -37,120 +37,213 @@ function Home() {
   });
   const newest = useQuery({
     queryKey: ["products", { sort: "newest" }],
-    queryFn: () => listProducts({ data: { sort: "newest", limit: 6 } }),
+    queryFn: () => listProducts({ data: { sort: "newest", limit: 8 } }),
   });
 
   return (
     <StoreLayout>
-      {/* HERO */}
-      <section className="relative h-[78vh] min-h-[520px] w-full overflow-hidden bg-paper">
+      <section className="relative min-h-[calc(100vh-6rem)] overflow-hidden bg-slate-950 text-white">
         <img
           src={hero}
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover object-center"
+          alt="Hero editorial imagery"
+          className="absolute inset-0 h-full w-full object-cover object-center opacity-80"
           width={1920}
           height={1280}
         />
-        <div className="absolute inset-0 bg-black/20" />
-        <div className="relative h-full container-max flex items-center">
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-slate-950/30 to-slate-950/95" />
+        <div className="relative mx-auto grid max-w-screen-2xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-[1.2fr_0.9fr] lg:py-24 xl:px-8">
           <motion.div
-            initial={{ opacity: 0, y: 18 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease: "easeOut" }}
-            className="max-w-2xl text-white"
+            className="flex flex-col justify-center gap-8"
           >
-            <div className="editorial-eyebrow text-white/75 mb-4">Spring / Summer · Volume 04</div>
-            <h1 className="hero-title text-5xl md:text-6xl lg:text-7xl mb-6">
-              Quiet luxury, considered cuts.
-            </h1>
-            <p className="text-lg text-white/90 max-w-lg mb-8">
-              A studied edit of footwear and ready-to-wear, made in small batches with attention to
-              detail.
-            </p>
-            <div className="flex gap-4">
+            <div className="inline-flex rounded-full border border-white/20 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.35em] text-white/80">
+              Spring / Summer — Collection 04
+            </div>
+            <div className="max-w-2xl">
+              <h1 className="text-4xl font-display tracking-tight text-white sm:text-5xl lg:text-6xl">
+                Quiet luxury, considered cuts.
+              </h1>
+              <p className="mt-6 max-w-xl text-base leading-8 text-slate-200 sm:text-lg">
+                A curated edit of footwear and ready-to-wear, made in small batches with a quiet
+                confidence and crafted for today’s modern wardrobe.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <Link
                 to="/shop/$gender"
                 params={{ gender: "women" }}
-                className="bg-ink text-white px-6 py-3 text-sm tracking-wider uppercase rounded-md shadow-card hover:opacity-95 transition-in-out-quad"
+                className="inline-flex w-full items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold uppercase tracking-[0.35em] text-slate-950 shadow-lg shadow-black/20 transition hover:scale-[1.01] sm:w-auto"
               >
                 Shop Women
               </Link>
               <Link
                 to="/shop/$gender"
                 params={{ gender: "men" }}
-                className="border border-white/30 text-white px-6 py-3 text-sm tracking-wider uppercase rounded-md hover:bg-white/6 transition-in-out-quad"
+                className="inline-flex w-full items-center justify-center rounded-full border border-white/30 bg-white/5 px-6 py-3 text-sm font-semibold uppercase tracking-[0.35em] text-white transition hover:bg-white/10 sm:w-auto"
               >
                 Shop Men
               </Link>
             </div>
           </motion.div>
+
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-1">
+            {[
+              {
+                title: "Leather essentials",
+                subtitle: "New season selection",
+                description: "Hand-finished silhouettes with a refined, understated edge.",
+                image:
+                  "https://images.unsplash.com/photo-1514996937319-344454492b37?w=900&q=80",
+              },
+              {
+                title: "Modern tailoring",
+                subtitle: "Tailored for today",
+                description: "Smart, easy pieces that elevate every wardrobe.",
+                image:
+                  "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=900&q=80",
+              },
+            ].map((card) => (
+              <Link
+                key={card.title}
+                to="/shop"
+                className="group relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-slate-900/80 shadow-2xl shadow-black/25 transition hover:-translate-y-1 hover:shadow-black/40"
+              >
+                <img
+                  src={card.image}
+                  alt={card.title}
+                  className="h-64 w-full object-cover transition duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-6">
+                  <p className="text-xs uppercase tracking-[0.35em] text-white/60">{card.subtitle}</p>
+                  <h2 className="mt-2 text-2xl font-display text-white">{card.title}</h2>
+                  <p className="mt-3 text-sm leading-6 text-slate-200">{card.description}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* COLLECTIONS SPLIT */}
-      <section className="container-max py-20 grid md:grid-cols-2 gap-6">
-        {[
-          {
-            gender: "women" as const,
-            label: "Women",
-            img: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1400&q=85",
-          },
-          {
-            gender: "men" as const,
-            label: "Men",
-            img: "https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?w=1400&q=85",
-          },
-        ].map((c) => (
-          <Link
-            key={c.gender}
-            to="/shop/$gender"
-            params={{ gender: c.gender }}
-            className="group relative block rounded-lg overflow-hidden aspect-[4/5] bg-muted shadow-card"
-          >
-            <img
-              src={c.img}
-              alt={c.label}
-              loading="lazy"
-              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-            <div className="absolute bottom-8 left-8">
-              <div className="editorial-eyebrow text-white/70 mb-2">Collection</div>
-              <div className="font-display text-4xl text-white">{c.label}</div>
-            </div>
-          </Link>
-        ))}
+      <section className="mx-auto max-w-screen-2xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mb-12 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
+          <div>
+            <div className="editorial-eyebrow text-muted-foreground mb-3">Featured edit</div>
+            <h2 className="font-display text-4xl sm:text-5xl">A quiet wardrobe of statement pieces.</h2>
+          </div>
+          <div className="text-sm leading-7 text-muted-foreground">
+            Discover the season’s editorial favorites — curated in limited quantities with a focus
+            on premium materials and timeless silhouettes.
+          </div>
+        </div>
+        <ProductRail
+          title="Featured"
+          eyebrow="Editor's pick"
+          loading={featured.isLoading}
+          items={featured.data ?? []}
+        />
       </section>
 
-      {/* FEATURED */}
-      <ProductRail
-        title="Featured"
-        eyebrow="Editor's pick"
-        loading={featured.isLoading}
-        items={featured.data ?? []}
-      />
-
-      {/* EDITORIAL */}
-      <section className="bg-secondary my-24 py-24">
-        <div className="mx-auto max-w-3xl px-6 text-center">
-          <div className="editorial-eyebrow text-muted-foreground mb-6">Our values</div>
-          <h2 className="font-display text-4xl md:text-5xl leading-tight mb-6">
-            We make less, better — and we make it last.
-          </h2>
-          <p className="text-muted-foreground">
-            Every piece is cut in considered batches. Leather is vegetable-tanned in Tuscany; wool
-            is sourced from mills with a centuries-old record.
+      <section className="mx-auto max-w-screen-2xl px-4 pb-16 sm:px-6 lg:px-8 lg:pb-20">
+        <div className="mb-10 text-center">
+          <div className="editorial-eyebrow text-muted-foreground mb-3">Shop the edit</div>
+          <h2 className="font-display text-3xl sm:text-4xl">A refined edit for every moment.</h2>
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base">
+            Explore effortless essentials, elevated outerwear, and accessories designed to anchor
+            your signature style.
           </p>
         </div>
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          {[
+            {
+              title: "Boots & footwear",
+              description: "Understated silhouettes with considered construction.",
+              image:
+                "https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=900&q=80",
+            },
+            {
+              title: "Outerwear",
+              description: "Tailoring and outer layers for crisp days and city evenings.",
+              image:
+                "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=900&q=80",
+            },
+            {
+              title: "Accessories",
+              description: "Clean accents that refine every look.",
+              image:
+                "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=900&q=80",
+            },
+          ].map((card) => (
+            <Link
+              key={card.title}
+              to="/shop"
+              className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/80 shadow-2xl shadow-black/20 transition hover:-translate-y-1 hover:shadow-black/30"
+            >
+              <img
+                src={card.image}
+                alt={card.title}
+                className="h-72 w-full object-cover transition duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/30 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-6">
+                <p className="text-xs uppercase tracking-[0.35em] text-white/60">Shop</p>
+                <h3 className="mt-3 text-2xl font-display text-white">{card.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-300">{card.description}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
       </section>
 
-      {/* NEW ARRIVALS */}
-      <ProductRail
-        title="New arrivals"
-        eyebrow="Just landed"
-        loading={newest.isLoading}
-        items={newest.data ?? []}
-      />
+      <section className="mx-auto max-w-screen-2xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="grid gap-6 lg:grid-cols-3">
+          {[
+            {
+              title: "Crafted in small batches",
+              description: "Minimal runs for better quality, reduced waste, and a stronger story.",
+            },
+            {
+              title: "Sustainable materials",
+              description: "Vegetable-tanned leather, fine wools, and responsibly sourced fabrics.",
+            },
+            {
+              title: "Modern tailoring",
+              description: "Soft, precise cuts built for comfort and elegant everyday wear.",
+            },
+          ].map((feature) => (
+            <div
+              key={feature.title}
+              className="rounded-[2rem] border border-border bg-background/90 p-8 shadow-lg shadow-slate-950/5"
+            >
+              <p className="text-xs uppercase tracking-[0.35em] text-muted-foreground">
+                Why us
+              </p>
+              <h3 className="mt-4 text-2xl font-semibold text-foreground">{feature.title}</h3>
+              <p className="mt-4 text-sm leading-7 text-muted-foreground">{feature.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-screen-2xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mb-12 grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div>
+            <div className="editorial-eyebrow text-muted-foreground mb-3">New arrivals</div>
+            <h2 className="font-display text-4xl sm:text-5xl">Just landed in the studio.</h2>
+          </div>
+          <Link to="/shop" className="text-sm underline underline-offset-4 hover:text-accent">
+            View all new arrivals
+          </Link>
+        </div>
+        <ProductRail
+          title="New arrivals"
+          eyebrow="Just landed"
+          loading={newest.isLoading}
+          items={newest.data ?? []}
+        />
+      </section>
 
       <NewsletterSection />
     </StoreLayout>

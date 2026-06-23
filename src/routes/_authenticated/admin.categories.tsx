@@ -8,20 +8,12 @@ import {
   listAllCategories,
   upsertCategory,
   toggleCategoryActive,
-<<<<<<< HEAD
-  reorderCategories,
-=======
   deleteCategory,
-  reorderCategory,
->>>>>>> 005021b38af35ac52e5cd463d8dd8580f57ecb22
+  reorderCategories,
 } from "@/lib/categories.functions";
 import {
   ChevronRight,
   Folder,
-<<<<<<< HEAD
-  FolderOpen,
-=======
->>>>>>> 005021b38af35ac52e5cd463d8dd8580f57ecb22
   Edit,
   Trash2,
   Eye,
@@ -52,6 +44,8 @@ interface Category {
 
 function CategoriesAdmin() {
   const qc = useQueryClient();
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "draft">("all");
   const { data, isLoading } = useQuery({
     queryKey: ["admin-cats"],
     queryFn: () => listAllCategories(),
@@ -71,13 +65,35 @@ function CategoriesAdmin() {
     meta_description: string;
   } | null>(null);
 
-  // Group categories into parent -> children tree structure
+  const categoryCounts = useMemo(() => {
+    const categories = (data ?? []) as Category[];
+    return {
+      total: categories.length,
+      active: categories.filter((c) => c.is_active).length,
+      draft: categories.filter((c) => !c.is_active).length,
+      topLevel: categories.filter((c) => !c.parent_id).length,
+    };
+  }, [data]);
+
+  // Group categories into parent -> children tree structure with optional filtering
   const { roots, childrenMap } = useMemo(() => {
     const categories = (data ?? []) as Category[];
+    const searchTerm = search.trim().toLowerCase();
+
+    const filtered = categories.filter((cat) => {
+      if (statusFilter !== "all") {
+        if (statusFilter === "active" && !cat.is_active) return false;
+        if (statusFilter === "draft" && cat.is_active) return false;
+      }
+      if (!searchTerm) return true;
+      const subject = `${cat.name} ${cat.slug} ${cat.gender} ${cat.type}`.toLowerCase();
+      return subject.includes(searchTerm);
+    });
+
     const roots: Category[] = [];
     const childrenMap = new Map<string, Category[]>();
 
-    categories.forEach((cat) => {
+    filtered.forEach((cat) => {
       if (!cat.parent_id) {
         roots.push(cat);
       } else {
@@ -93,7 +109,7 @@ function CategoriesAdmin() {
     }
 
     return { roots, childrenMap };
-  }, [data]);
+  }, [data, search, statusFilter]);
 
   async function save() {
     if (!editing) return;
@@ -124,7 +140,17 @@ function CategoriesAdmin() {
     }
   }
 
-<<<<<<< HEAD
+  async function remove(id: string, name: string) {
+    if (!confirm(`Delete category "${name}"? This action cannot be undone.`)) return;
+    try {
+      await deleteCategory({ data: { id } });
+      qc.invalidateQueries({ queryKey: ["admin-cats"] });
+      toast.success("Category deleted");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to delete category");
+    }
+  }
+
   async function moveCategory(category: Category, direction: "up" | "down") {
     const categories = (data ?? []) as Category[];
     const siblings = categories
@@ -148,25 +174,6 @@ function CategoriesAdmin() {
       toast.success("Category order updated");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed to update order");
-=======
-  async function remove(id: string, name: string) {
-    if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
-    try {
-      await deleteCategory({ data: { id } });
-      toast.success("Category deleted");
-      qc.invalidateQueries({ queryKey: ["admin-cats"] });
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed");
-    }
-  }
-
-  async function move(id: string, direction: "up" | "down") {
-    try {
-      await reorderCategory({ data: { id, direction } });
-      qc.invalidateQueries({ queryKey: ["admin-cats"] });
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed");
->>>>>>> 005021b38af35ac52e5cd463d8dd8580f57ecb22
     }
   }
 
@@ -176,113 +183,89 @@ function CategoriesAdmin() {
     return (
       <div key={c.id} className="w-full">
         <div
-          className={`flex items-center justify-between py-3 px-4 hover:bg-muted/40 border-b border-border transition-colors ${depth > 0 ? "bg-background/50" : "bg-card"}`}
+          className={`grid gap-3 py-3 px-4 hover:bg-muted/40 border-b border-border transition-colors ${depth > 0 ? "bg-background/50" : "bg-card"}`}
         >
-          <div
-            className="flex items-center gap-2 flex-1"
-            style={{ paddingLeft: `${depth * 24}px` }}
-          >
-            {depth > 0 ? (
-              <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
-            ) : (
-              <Folder className="h-4 w-4 text-accent shrink-0" />
-            )}
-            <div className="flex flex-col">
-              <span className="font-medium text-sm">{c.name}</span>
-              <span className="text-[10px] text-muted-foreground">slug: {c.slug}</span>
+          <div className="flex flex-col gap-4 sm:grid sm:grid-cols-[1.6fr_0.9fr_0.9fr_1.2fr] sm:items-center sm:gap-3">
+            <div className="flex items-center gap-3 min-w-0" style={{ paddingLeft: `${depth * 24}px` }}>
+              {depth > 0 ? (
+                <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+              ) : (
+                <Folder className="h-4 w-4 text-accent shrink-0" />
+              )}
+              <div className="min-w-0">
+                <div className="font-medium text-sm truncate">{c.name}</div>
+                <div className="text-[10px] text-muted-foreground truncate">slug: {c.slug}</div>
+              </div>
+              {c.image_url && (
+                <img
+                  src={c.image_url}
+                  alt=""
+                  className="h-8 w-8 rounded object-cover border border-border"
+                />
+              )}
             </div>
-            {c.image_url && (
-              <img
-                src={c.image_url}
-                alt=""
-                className="h-6 w-6 rounded object-cover ml-2 border border-border"
-              />
-            )}
-          </div>
 
-          <div className="flex items-center gap-8 text-xs text-muted-foreground">
-            <span className="w-16 uppercase tracking-wider text-[10px] text-center">
+            <div className="text-center text-xs uppercase tracking-[0.25em] text-muted-foreground">
               {c.gender}
-            </span>
-            <span className="w-16 uppercase tracking-wider text-[10px] text-center">{c.type}</span>
-            <div className="w-20 text-center flex items-center justify-center">
+            </div>
+
+            <div className="text-center text-xs uppercase tracking-[0.25em] text-muted-foreground">
+              {c.type}
+            </div>
+
+            <div className="flex flex-col gap-2 sm:items-end text-xs text-muted-foreground">
               <button
                 onClick={() => toggle(c.id, !c.is_active)}
-                className={`p-1 hover:text-accent transition-colors`}
+                className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-1 text-[10px] uppercase transition hover:border-accent"
                 title={c.is_active ? "Deactivate" : "Activate"}
               >
-                {c.is_active ? (
-                  <span className="inline-flex items-center gap-1 text-accent font-medium text-[10px] uppercase">
-                    <Eye className="h-3.5 w-3.5" /> Active
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 text-muted-foreground text-[10px] uppercase">
-                    <EyeOff className="h-3.5 w-3.5" /> Draft
-                  </span>
-                )}
+                {c.is_active ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+                {c.is_active ? "Active" : "Draft"}
               </button>
-            </div>
-
-<<<<<<< HEAD
-            <div className="w-32 flex justify-end gap-2 pr-2">
-              <button
-                onClick={() => moveCategory(c, "up")}
-                className="hover:text-accent p-1 transition-colors"
-                title="Move up"
-              >
-                <ArrowUp className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => moveCategory(c, "down")}
-                className="hover:text-accent p-1 transition-colors"
-                title="Move down"
-              >
-                <ArrowDown className="h-4 w-4" />
-=======
-            <div className="w-32 flex justify-end gap-2 pr-2 items-center">
-              <button
-                onClick={() => move(c.id, "up")}
-                className="hover:text-accent p-1 transition-colors"
-                title="Move up"
-              >
-                <ArrowUp className="h-3.5 w-3.5" />
-              </button>
-              <button
-                onClick={() => move(c.id, "down")}
-                className="hover:text-accent p-1 transition-colors"
-                title="Move down"
-              >
-                <ArrowDown className="h-3.5 w-3.5" />
->>>>>>> 005021b38af35ac52e5cd463d8dd8580f57ecb22
-              </button>
-              <button
-                onClick={() =>
-                  setEditing({
-                    id: c.id,
-                    name: c.name,
-                    slug: c.slug,
-                    gender: c.gender,
-                    type: c.type,
-                    parent_id: c.parent_id,
-                    image_url: c.image_url ?? "",
-                    is_active: c.is_active,
-                    display_order: c.display_order,
-                    meta_title: c.meta_title ?? "",
-                    meta_description: c.meta_description ?? "",
-                  })
-                }
-                className="hover:text-foreground p-1 transition-colors"
-                title="Edit"
-              >
-                <Edit className="h-3.5 w-3.5" />
-              </button>
-              <button
-                onClick={() => remove(c.id, c.name)}
-                className="hover:text-destructive p-1 transition-colors"
-                title="Delete"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-              </button>
+              <div className="flex flex-wrap items-center gap-2 justify-start sm:justify-end">
+                <button
+                  onClick={() => moveCategory(c, "up")}
+                  className="rounded-full border border-border p-2 transition hover:border-accent"
+                  title="Move up"
+                >
+                  <ArrowUp className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  onClick={() => moveCategory(c, "down")}
+                  className="rounded-full border border-border p-2 transition hover:border-accent"
+                  title="Move down"
+                >
+                  <ArrowDown className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  onClick={() =>
+                    setEditing({
+                      id: c.id,
+                      name: c.name,
+                      slug: c.slug,
+                      gender: c.gender,
+                      type: c.type,
+                      parent_id: c.parent_id,
+                      image_url: c.image_url ?? "",
+                      is_active: c.is_active,
+                      display_order: c.display_order,
+                      meta_title: c.meta_title ?? "",
+                      meta_description: c.meta_description ?? "",
+                    })
+                  }
+                  className="rounded-full border border-border p-2 transition hover:border-accent"
+                  title="Edit"
+                >
+                  <Edit className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  onClick={() => remove(c.id, c.name)}
+                  className="rounded-full border border-destructive/50 p-2 text-destructive transition hover:bg-destructive/10"
+                  title="Delete"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -326,28 +309,60 @@ function CategoriesAdmin() {
       {isLoading ? (
         <p className="text-sm text-muted-foreground animate-pulse">Loading categories...</p>
       ) : (
-        <div className="bg-card border border-border">
-          {/* Header row */}
-          <div className="flex items-center justify-between py-2.5 px-4 bg-muted/30 border-b border-border text-xs uppercase tracking-wider font-semibold text-muted-foreground">
-            <div className="flex-1">Category Tree / Name</div>
-            <div className="flex items-center gap-8">
-              <span className="w-16 text-center">Gender</span>
-              <span className="w-16 text-center">Type</span>
-              <span className="w-20 text-center">Status</span>
-              <span className="w-32 text-right pr-4">Actions</span>
+        <>
+          <div className="mb-6 grid gap-4 xl:grid-cols-[1.5fr_auto]">
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              <SummaryCard label="Total" value={String(categoryCounts.total)} />
+              <SummaryCard label="Top-level" value={String(categoryCounts.topLevel)} />
+              <SummaryCard label="Active" value={String(categoryCounts.active)} />
+              <SummaryCard label="Draft" value={String(categoryCounts.draft)} />
+            </div>
+            <div className="grid gap-3">
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search categories"
+                className="w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm focus:outline-none focus:border-accent"
+              />
+              <div className="flex flex-wrap gap-2">
+                {(["all", "active", "draft"] as const).map((filter) => (
+                  <button
+                    key={filter}
+                    type="button"
+                    onClick={() => setStatusFilter(filter)}
+                    className={`rounded-full px-4 py-2 text-sm uppercase tracking-[0.25em] transition ${
+                      statusFilter === filter
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-background border border-border text-muted-foreground hover:bg-secondary"
+                    }`}
+                  >
+                    {filter}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Tree Rows */}
-          <div className="divide-y divide-border/40">
-            {roots.map((root) => renderCategoryRow(root))}
-            {roots.length === 0 && (
-              <div className="py-12 text-center text-sm text-muted-foreground">
-                No categories found. Create a category to get started.
-              </div>
-            )}
+          <div className="bg-card border border-border">
+            {/* Header row */}
+            <div className="hidden sm:grid grid-cols-[1.8fr_0.85fr_0.85fr_1.2fr] items-center gap-4 py-3 px-4 bg-muted/30 border-b border-border text-xs uppercase tracking-wider font-semibold text-muted-foreground">
+              <div>Category / Name</div>
+              <div className="text-center">Gender</div>
+              <div className="text-center">Type</div>
+              <div className="text-right">Actions</div>
+            </div>
+
+            {/* Tree Rows */}
+            <div className="divide-y divide-border/40">
+              {roots.map((root) => renderCategoryRow(root))}
+              {roots.length === 0 && (
+                <div className="py-12 text-center text-sm text-muted-foreground">
+                  No categories found. Create a category to get started.
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* Editing Dialog Modal */}
@@ -561,6 +576,15 @@ function Select({
           </option>
         ))}
       </select>
+    </div>
+  );
+}
+
+function SummaryCard({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-3xl border border-border bg-background/90 p-5 shadow-sm shadow-slate-950/5">
+      <div className="text-xs uppercase tracking-[0.35em] text-muted-foreground">{label}</div>
+      <div className="mt-3 text-2xl font-semibold text-foreground">{value}</div>
     </div>
   );
 }

@@ -20,24 +20,17 @@ export function ProductCard({
   categoryName,
 }: ProductCardProps) {
   return (
-<<<<<<< HEAD
-    <Link
-      to="/product/$slug"
-      params={{ slug }}
-      className="group block rounded-lg overflow-hidden bg-transparent transition-shadow hover:shadow-card"
-=======
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.5, ease: "easeOut" }}
     >
-    <Link
-      to="/product/$slug"
-      params={{ slug }}
-      className="group block overflow-hidden bg-card border border-border hover:border-accent/40 transition-all"
->>>>>>> 005021b38af35ac52e5cd463d8dd8580f57ecb22
-    >
+      <Link
+        to="/product/$slug"
+        params={{ slug }}
+        className="group block overflow-hidden bg-card border border-border hover:border-accent/40 transition-all"
+      >
       <div className="relative aspect-[4/5] bg-muted overflow-hidden">
         {image ? (
           <img

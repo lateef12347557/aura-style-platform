@@ -47,11 +47,17 @@ function createSupabaseAdminClient() {
     // Return a dummy proxy client that only throws when queries/calls are executed
     return new Proxy({} as unknown as ReturnType<typeof createSupabaseAdminClient>, {
       get(_, prop) {
+        if (prop === "then" || prop === "toJSON" || typeof prop === "symbol") {
+          return undefined;
+        }
         return new Proxy(() => {}, {
           apply() {
             throw new Error(message);
           },
           get(_, nestedProp) {
+            if (nestedProp === "then" || nestedProp === "toJSON" || typeof nestedProp === "symbol") {
+              return undefined;
+            }
             throw new Error(message);
           },
         });

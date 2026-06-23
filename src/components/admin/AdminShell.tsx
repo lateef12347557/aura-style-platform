@@ -6,6 +6,7 @@ import {
   FolderTree,
   ShoppingCart,
   Users,
+  Layers,
   ArrowLeft,
   LogOut,
   Menu,
@@ -17,7 +18,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 
 const NAV: Array<{
-  to: "/admin" | "/admin/products" | "/admin/categories" | "/admin/orders" | "/admin/customers";
+  to:
+    | "/admin"
+    | "/admin/products"
+    | "/admin/categories"
+    | "/admin/orders"
+    | "/admin/customers";
   label: string;
   icon: typeof LayoutDashboard;
   exact?: boolean;
@@ -107,8 +113,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen flex bg-background">
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex w-60 bg-sidebar text-sidebar-foreground flex-col shrink-0">
-        {sidebarContent}
+      <aside className="hidden md:flex w-72 flex-col shrink-0 bg-sidebar text-sidebar-foreground border-r border-sidebar-border sticky top-0">
+        <div className="flex h-full flex-col justify-between">
+          {sidebarContent}
+        </div>
       </aside>
 
       {/* Mobile drawer */}
@@ -120,14 +128,14 @@ export function AdminShell({ children }: { children: ReactNode }) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileOpen(false)}
-              className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 lg:hidden"
+              className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 md:hidden"
             />
             <motion.aside
               initial={{ x: "-100%" }}
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 240 }}
-              className="fixed top-0 left-0 bottom-0 w-64 bg-sidebar text-sidebar-foreground flex flex-col z-50 lg:hidden"
+              className="fixed top-0 left-0 bottom-0 w-64 bg-sidebar text-sidebar-foreground flex flex-col z-50 md:hidden"
             >
               <button
                 onClick={() => setMobileOpen(false)}
@@ -144,7 +152,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
       <div className="flex-1 min-w-0 flex flex-col">
         {/* Mobile top bar */}
-        <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-border bg-sidebar text-sidebar-foreground sticky top-0 z-30">
+        <div className="md:hidden flex items-center justify-between px-4 py-3 border-b border-border bg-sidebar text-sidebar-foreground sticky top-0 z-30">
           <button
             onClick={() => setMobileOpen(true)}
             aria-label="Open menu"
