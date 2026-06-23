@@ -97,6 +97,24 @@ export const listProducts = createServerFn({ method: "GET" })
     interface ReviewRating {
       rating: number;
     }
+    interface ProductCategory {
+      id: string;
+      name: string;
+      slug: string;
+      gender: string;
+      type: string;
+    }
+    interface ProductImage {
+      image_url: string;
+      is_primary: boolean | null;
+      display_order: number | null;
+    }
+    interface ProductVariant {
+      id: string;
+      size: string | null;
+      color: string | null;
+      stock_quantity: number;
+    }
     interface ProductQueryResult {
       id: string;
       name: string;
@@ -105,9 +123,9 @@ export const listProducts = createServerFn({ method: "GET" })
       compare_price: number | null;
       is_featured: boolean;
       created_at: string;
-      category: unknown;
-      images: unknown;
-      variants: unknown;
+      category: ProductCategory | null;
+      images: ProductImage[];
+      variants: ProductVariant[];
       reviews: ReviewRating[] | null;
       avgRating?: number;
     }
