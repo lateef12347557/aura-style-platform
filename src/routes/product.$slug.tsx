@@ -25,25 +25,32 @@ export const Route = createFileRoute("/product/$slug")({
     return {
       meta: [
         { title: p ? `${p.name} — ATELIER` : "ATELIER" },
-        { name: "description", content: p?.meta_description || p?.description?.slice(0, 160) || "ATELIER product" },
+        {
+          name: "description",
+          content: p?.meta_description || p?.description?.slice(0, 160) || "ATELIER product",
+        },
         { property: "og:title", content: p?.name ?? "ATELIER" },
         { property: "og:type", content: "product" },
         { property: "og:url", content: `/product/${params.slug}` },
-        ...(p?.images?.[0]?.image_url ? [{ property: "og:image" as const, content: p.images[0].image_url }] : []),
+        ...(p?.images?.[0]?.image_url
+          ? [{ property: "og:image" as const, content: p.images[0].image_url }]
+          : []),
       ],
       links: [{ rel: "canonical", href: `/product/${params.slug}` }],
       scripts: p
-        ? [{
-            type: "application/ld+json",
-            children: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Product",
-              name: p.name,
-              description: p.description,
-              sku: p.sku,
-              offers: { "@type": "Offer", price: p.price, priceCurrency: "USD" },
-            }),
-          }]
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Product",
+                name: p.name,
+                description: p.description,
+                sku: p.sku,
+                offers: { "@type": "Offer", price: p.price, priceCurrency: "USD" },
+              }),
+            },
+          ]
         : [],
     };
   },
@@ -54,7 +61,7 @@ function ProductPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { product } = Route.useLoaderData();
-  
+
   const sortedImages = [...(product.images ?? [])].sort((a, b) => {
     if (a.is_primary && !b.is_primary) return -1;
     if (!a.is_primary && b.is_primary) return 1;
@@ -63,17 +70,38 @@ function ProductPage() {
 
   const [activeImg, setActiveImg] = useState(0);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
-  const [zoomStyle, setZoomStyle] = useState({ transformOrigin: "center center", transform: "scale(1)" });
+  const [zoomStyle, setZoomStyle] = useState({
+    transformOrigin: "center center",
+    transform: "scale(1)",
+  });
 
   // Reviews and rating
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewComment, setReviewComment] = useState("");
   const [submittingReview, setSubmittingReview] = useState(false);
 
-  const variants = (product.variants ?? []) as Array<{ id: string; size: string | null; color: string | null; stock_quantity: number; price_modifier: number | string }>;
-  const reviews = (product.reviews ?? []) as Array<{ id: string; rating: number; comment: string | null; created_at: string; user_id: string }>;
-  const colors = useMemo(() => Array.from(new Set(variants.map((v) => v.color).filter(Boolean))) as string[], [variants]);
-  const sizes = useMemo(() => Array.from(new Set(variants.map((v) => v.size).filter(Boolean))) as string[], [variants]);
+  const variants = (product.variants ?? []) as Array<{
+    id: string;
+    size: string | null;
+    color: string | null;
+    stock_quantity: number;
+    price_modifier: number | string;
+  }>;
+  const reviews = (product.reviews ?? []) as Array<{
+    id: string;
+    rating: number;
+    comment: string | null;
+    created_at: string;
+    user_id: string;
+  }>;
+  const colors = useMemo(
+    () => Array.from(new Set(variants.map((v) => v.color).filter(Boolean))) as string[],
+    [variants],
+  );
+  const sizes = useMemo(
+    () => Array.from(new Set(variants.map((v) => v.size).filter(Boolean))) as string[],
+    [variants],
+  );
   const [color, setColor] = useState<string | null>(colors[0] ?? null);
   const [size, setSize] = useState<string | null>(null);
 
@@ -92,7 +120,11 @@ function ProductPage() {
     queryKey: ["related", product.category?.id],
     queryFn: () =>
       listProducts({
-        data: { gender: product.category?.gender ?? undefined, type: product.category?.type ?? undefined, limit: 5 },
+        data: {
+          gender: product.category?.gender ?? undefined,
+          type: product.category?.type ?? undefined,
+          limit: 5,
+        },
       }),
   });
 
@@ -203,7 +235,9 @@ function ProductPage() {
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm">No image available</div>
+                <div className="h-full w-full flex items-center justify-center text-muted-foreground text-sm">
+                  No image available
+                </div>
               )}
             </div>
             {sortedImages.length > 1 && (
@@ -224,8 +258,12 @@ function ProductPage() {
           {/* Product Information */}
           <div className="md:sticky md:top-24 md:self-start space-y-6">
             <div>
-              <div className="editorial-eyebrow text-muted-foreground mb-2">{product.category?.name}</div>
-              <h1 className="font-display text-4xl lg:text-5xl tracking-tight leading-tight">{product.name}</h1>
+              <div className="editorial-eyebrow text-muted-foreground mb-2">
+                {product.category?.name}
+              </div>
+              <h1 className="font-display text-4xl lg:text-5xl tracking-tight leading-tight">
+                {product.name}
+              </h1>
             </div>
 
             <div className="flex items-baseline gap-4 py-2 border-b border-border">
@@ -243,26 +281,38 @@ function ProductPage() {
               <div className="flex items-center gap-1.5 text-xs uppercase tracking-wider text-muted-foreground">
                 <div className="flex gap-0.5">
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className={`h-3.5 w-3.5 ${i < Math.round(avgRating) ? "fill-accent text-accent" : "text-muted-foreground"}`} />
+                    <Star
+                      key={i}
+                      className={`h-3.5 w-3.5 ${i < Math.round(avgRating) ? "fill-accent text-accent" : "text-muted-foreground"}`}
+                    />
                   ))}
                 </div>
-                <span>({reviews.length} customer review{reviews.length > 1 ? "s" : ""})</span>
+                <span>
+                  ({reviews.length} customer review{reviews.length > 1 ? "s" : ""})
+                </span>
               </div>
             )}
 
-            <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">{product.description}</p>
+            <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
+              {product.description}
+            </p>
 
             {/* Colors Variant Selector */}
             {colors.length > 0 && (
               <div className="space-y-3">
-                <div className="editorial-eyebrow text-xs text-muted-foreground">Color · <span className="text-foreground font-semibold">{color}</span></div>
+                <div className="editorial-eyebrow text-xs text-muted-foreground">
+                  Color · <span className="text-foreground font-semibold">{color}</span>
+                </div>
                 <div className="flex gap-3">
                   {colors.map((c) => {
                     const active = color === c;
                     return (
                       <button
                         key={c}
-                        onClick={() => { setColor(c); setSize(null); }}
+                        onClick={() => {
+                          setColor(c);
+                          setSize(null);
+                        }}
                         className={`px-4 py-2 text-xs border uppercase tracking-wider transition-all duration-200 ${active ? "border-primary bg-primary text-primary-foreground font-medium" : "border-border hover:border-primary text-muted-foreground hover:text-foreground"}`}
                       >
                         {c}
@@ -278,7 +328,10 @@ function ProductPage() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="editorial-eyebrow text-xs text-muted-foreground">Size</div>
-                  <button onClick={() => setSizeGuideOpen(true)} className="text-xs uppercase tracking-wider underline underline-offset-4 hover:text-accent transition-colors">
+                  <button
+                    onClick={() => setSizeGuideOpen(true)}
+                    className="text-xs uppercase tracking-wider underline underline-offset-4 hover:text-accent transition-colors"
+                  >
                     Size guide
                   </button>
                 </div>
@@ -298,7 +351,9 @@ function ProductPage() {
                       >
                         <span>{s}</span>
                         {lowStock && !isSelected && (
-                          <span className="absolute bottom-1 text-[8px] uppercase tracking-tighter text-accent font-semibold">Low</span>
+                          <span className="absolute bottom-1 text-[8px] uppercase tracking-tighter text-accent font-semibold">
+                            Low
+                          </span>
                         )}
                       </button>
                     );
@@ -311,9 +366,13 @@ function ProductPage() {
                     {variant.stock_quantity <= 0 ? (
                       <span className="text-destructive font-medium">Out of stock</span>
                     ) : variant.stock_quantity < 5 ? (
-                      <span className="text-accent font-medium">Only {variant.stock_quantity} left in stock — order soon</span>
+                      <span className="text-accent font-medium">
+                        Only {variant.stock_quantity} left in stock — order soon
+                      </span>
                     ) : (
-                      <span className="text-muted-foreground flex items-center gap-1"><Check className="h-3 w-3 text-accent" /> In stock (ships immediately)</span>
+                      <span className="text-muted-foreground flex items-center gap-1">
+                        <Check className="h-3 w-3 text-accent" /> In stock (ships immediately)
+                      </span>
                     )}
                   </div>
                 )}
@@ -336,21 +395,27 @@ function ProductPage() {
                 <Heart className={`h-5 w-5 ${isWishlisted ? "fill-accent stroke-accent" : ""}`} />
               </button>
             </div>
-            <p className="text-[11px] text-muted-foreground mt-4 text-center">Complimentary shipping on orders over $250. 30-day hassle-free returns.</p>
+            <p className="text-[11px] text-muted-foreground mt-4 text-center">
+              Complimentary shipping on orders over $250. 30-day hassle-free returns.
+            </p>
           </div>
         </div>
 
         {/* Reviews Section */}
         <section className="mt-28 border-t border-border pt-16 max-w-4xl">
           <h2 className="font-display text-3xl mb-8">Customer Reviews</h2>
-          
+
           <div className="grid md:grid-cols-5 gap-10">
             {/* Reviews list */}
             <div className="md:col-span-3 space-y-8">
               {reviews.length === 0 ? (
                 <div className="bg-secondary p-8 border border-border text-center">
-                  <p className="text-sm text-muted-foreground font-display text-lg mb-1">No reviews yet</p>
-                  <p className="text-xs text-muted-foreground">Be the first to review this product and share your thoughts.</p>
+                  <p className="text-sm text-muted-foreground font-display text-lg mb-1">
+                    No reviews yet
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Be the first to review this product and share your thoughts.
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-6">
@@ -359,14 +424,23 @@ function ProductPage() {
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex gap-0.5">
                           {Array.from({ length: 5 }).map((_, i) => (
-                            <Star key={i} className={`h-3 w-3 ${i < r.rating ? "fill-accent text-accent" : "text-muted-foreground"}`} />
+                            <Star
+                              key={i}
+                              className={`h-3 w-3 ${i < r.rating ? "fill-accent text-accent" : "text-muted-foreground"}`}
+                            />
                           ))}
                         </div>
                         <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                          {new Date(r.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                          {new Date(r.created_at).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })}
                         </span>
                       </div>
-                      <p className="text-sm text-muted-foreground whitespace-pre-wrap">{r.comment}</p>
+                      <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                        {r.comment}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -379,7 +453,9 @@ function ProductPage() {
               {user ? (
                 <form onSubmit={handleReviewSubmit} className="space-y-4">
                   <div>
-                    <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-2">Rating</label>
+                    <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-2">
+                      Rating
+                    </label>
                     <div className="flex gap-1.5">
                       {[1, 2, 3, 4, 5].map((num) => (
                         <button
@@ -388,13 +464,17 @@ function ProductPage() {
                           onClick={() => setReviewRating(num)}
                           className="p-1 hover:scale-110 transition-transform"
                         >
-                          <Star className={`h-6 w-6 ${num <= reviewRating ? "fill-accent text-accent" : "text-muted-foreground"}`} />
+                          <Star
+                            className={`h-6 w-6 ${num <= reviewRating ? "fill-accent text-accent" : "text-muted-foreground"}`}
+                          />
                         </button>
                       ))}
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-2">Comment</label>
+                    <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-2">
+                      Comment
+                    </label>
                     <textarea
                       required
                       rows={4}
@@ -415,8 +495,13 @@ function ProductPage() {
               ) : (
                 <div className="text-center py-4 space-y-3">
                   <ShieldAlert className="h-6 w-6 text-muted-foreground mx-auto" />
-                  <p className="text-xs text-muted-foreground">You must be signed in to submit a review.</p>
-                  <Link to="/auth" className="inline-block bg-primary text-primary-foreground px-4 py-2 text-xs uppercase tracking-wider">
+                  <p className="text-xs text-muted-foreground">
+                    You must be signed in to submit a review.
+                  </p>
+                  <Link
+                    to="/auth"
+                    className="inline-block bg-primary text-primary-foreground px-4 py-2 text-xs uppercase tracking-wider"
+                  >
                     Sign In
                   </Link>
                 </div>
@@ -447,7 +532,10 @@ function ProductPage() {
         </section>
 
         <div className="mt-16">
-          <Link to="/shop" className="text-xs uppercase tracking-wider underline underline-offset-4 hover:text-accent transition-colors">
+          <Link
+            to="/shop"
+            className="text-xs uppercase tracking-wider underline underline-offset-4 hover:text-accent transition-colors"
+          >
             ← Back to shop
           </Link>
         </div>
@@ -476,7 +564,7 @@ function ProductPage() {
               >
                 <X className="h-5 w-5" />
               </button>
-              
+
               <h3 className="font-display text-3xl mb-2">Size Guide</h3>
               <p className="text-xs text-muted-foreground mb-6 uppercase tracking-wider">
                 Standard Measurements for {isShoes ? "Shoes & Footwear" : "Clothing & Apparel"}
@@ -496,16 +584,67 @@ function ProductPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border">
-                      <tr><td className="py-2.5">6</td><td className="py-2.5">7.5</td><td className="py-2.5">38</td><td className="py-2.5">5.5</td><td className="py-2.5">9.4"</td><td className="py-2.5">24.0</td></tr>
-                      <tr><td className="py-2.5">7</td><td className="py-2.5">8.5</td><td className="py-2.5">39</td><td className="py-2.5">6.5</td><td className="py-2.5">9.6"</td><td className="py-2.5">24.5</td></tr>
-                      <tr><td className="py-2.5">8</td><td className="py-2.5">9.5</td><td className="py-2.5">41</td><td className="py-2.5">7.5</td><td className="py-2.5">10.0"</td><td className="py-2.5">25.4</td></tr>
-                      <tr><td className="py-2.5">9</td><td className="py-2.5">10.5</td><td className="py-2.5">42</td><td className="py-2.5">8.5</td><td className="py-2.5">10.2"</td><td className="py-2.5">26.0</td></tr>
-                      <tr><td className="py-2.5">10</td><td className="py-2.5">11.5</td><td className="py-2.5">43</td><td className="py-2.5">9.5</td><td className="py-2.5">10.5"</td><td className="py-2.5">26.7</td></tr>
-                      <tr><td className="py-2.5">11</td><td className="py-2.5">12.5</td><td className="py-2.5">45</td><td className="py-2.5">10.5</td><td className="py-2.5">10.9"</td><td className="py-2.5">27.6</td></tr>
-                      <tr><td className="py-2.5">12</td><td className="py-2.5">13.5</td><td className="py-2.5">46</td><td className="py-2.5">11.5</td><td className="py-2.5">11.2"</td><td className="py-2.5">28.4</td></tr>
+                      <tr>
+                        <td className="py-2.5">6</td>
+                        <td className="py-2.5">7.5</td>
+                        <td className="py-2.5">38</td>
+                        <td className="py-2.5">5.5</td>
+                        <td className="py-2.5">9.4"</td>
+                        <td className="py-2.5">24.0</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2.5">7</td>
+                        <td className="py-2.5">8.5</td>
+                        <td className="py-2.5">39</td>
+                        <td className="py-2.5">6.5</td>
+                        <td className="py-2.5">9.6"</td>
+                        <td className="py-2.5">24.5</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2.5">8</td>
+                        <td className="py-2.5">9.5</td>
+                        <td className="py-2.5">41</td>
+                        <td className="py-2.5">7.5</td>
+                        <td className="py-2.5">10.0"</td>
+                        <td className="py-2.5">25.4</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2.5">9</td>
+                        <td className="py-2.5">10.5</td>
+                        <td className="py-2.5">42</td>
+                        <td className="py-2.5">8.5</td>
+                        <td className="py-2.5">10.2"</td>
+                        <td className="py-2.5">26.0</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2.5">10</td>
+                        <td className="py-2.5">11.5</td>
+                        <td className="py-2.5">43</td>
+                        <td className="py-2.5">9.5</td>
+                        <td className="py-2.5">10.5"</td>
+                        <td className="py-2.5">26.7</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2.5">11</td>
+                        <td className="py-2.5">12.5</td>
+                        <td className="py-2.5">45</td>
+                        <td className="py-2.5">10.5</td>
+                        <td className="py-2.5">10.9"</td>
+                        <td className="py-2.5">27.6</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2.5">12</td>
+                        <td className="py-2.5">13.5</td>
+                        <td className="py-2.5">46</td>
+                        <td className="py-2.5">11.5</td>
+                        <td className="py-2.5">11.2"</td>
+                        <td className="py-2.5">28.4</td>
+                      </tr>
                     </tbody>
                   </table>
-                  <p className="text-[10px] text-muted-foreground italic mt-4">Note: Fit may vary depending on construction, materials, and manufacturer.</p>
+                  <p className="text-[10px] text-muted-foreground italic mt-4">
+                    Note: Fit may vary depending on construction, materials, and manufacturer.
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -520,14 +659,46 @@ function ProductPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border">
-                      <tr><td className="py-2.5 font-bold">XS</td><td className="py-2.5">32-34</td><td className="py-2.5">26-28</td><td className="py-2.5">32-34</td><td className="py-2.5">31.5</td></tr>
-                      <tr><td className="py-2.5 font-bold">S</td><td className="py-2.5">35-37</td><td className="py-2.5">29-31</td><td className="py-2.5">35-37</td><td className="py-2.5">32.5</td></tr>
-                      <tr><td className="py-2.5 font-bold">M</td><td className="py-2.5">38-40</td><td className="py-2.5">32-34</td><td className="py-2.5">38-40</td><td className="py-2.5">33.5</td></tr>
-                      <tr><td className="py-2.5 font-bold">L</td><td className="py-2.5">41-43</td><td className="py-2.5">35-37</td><td className="py-2.5">41-43</td><td className="py-2.5">34.5</td></tr>
-                      <tr><td className="py-2.5 font-bold">XL</td><td className="py-2.5">44-46</td><td className="py-2.5">38-40</td><td className="py-2.5">44-46</td><td className="py-2.5">35.5</td></tr>
+                      <tr>
+                        <td className="py-2.5 font-bold">XS</td>
+                        <td className="py-2.5">32-34</td>
+                        <td className="py-2.5">26-28</td>
+                        <td className="py-2.5">32-34</td>
+                        <td className="py-2.5">31.5</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2.5 font-bold">S</td>
+                        <td className="py-2.5">35-37</td>
+                        <td className="py-2.5">29-31</td>
+                        <td className="py-2.5">35-37</td>
+                        <td className="py-2.5">32.5</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2.5 font-bold">M</td>
+                        <td className="py-2.5">38-40</td>
+                        <td className="py-2.5">32-34</td>
+                        <td className="py-2.5">38-40</td>
+                        <td className="py-2.5">33.5</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2.5 font-bold">L</td>
+                        <td className="py-2.5">41-43</td>
+                        <td className="py-2.5">35-37</td>
+                        <td className="py-2.5">41-43</td>
+                        <td className="py-2.5">34.5</td>
+                      </tr>
+                      <tr>
+                        <td className="py-2.5 font-bold">XL</td>
+                        <td className="py-2.5">44-46</td>
+                        <td className="py-2.5">38-40</td>
+                        <td className="py-2.5">44-46</td>
+                        <td className="py-2.5">35.5</td>
+                      </tr>
                     </tbody>
                   </table>
-                  <p className="text-[10px] text-muted-foreground italic mt-4 font-light">Measurements refer to body size, not garment dimensions.</p>
+                  <p className="text-[10px] text-muted-foreground italic mt-4 font-light">
+                    Measurements refer to body size, not garment dimensions.
+                  </p>
                 </div>
               )}
             </motion.div>

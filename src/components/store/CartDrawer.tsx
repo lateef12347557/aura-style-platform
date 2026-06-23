@@ -45,7 +45,12 @@ export function CartDrawer() {
                 <div key={`${i.productId}:${i.variantId ?? ""}`} className="flex gap-4 py-4">
                   <div className="h-24 w-20 bg-muted overflow-hidden flex-shrink-0">
                     {i.image && (
-                      <img src={i.image} alt={i.name} className="h-full w-full object-cover" loading="lazy" />
+                      <img
+                        src={i.image}
+                        alt={i.name}
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                      />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">

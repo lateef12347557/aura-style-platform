@@ -43,9 +43,9 @@ export const placeOrder = createServerFn({ method: "POST" })
       .select("id")
       .single();
     if (error) throw new Error(error.message);
-    const { error: itemErr } = await context.supabase.from("order_items").insert(
-      data.items.map((i) => ({ ...i, order_id: order.id })),
-    );
+    const { error: itemErr } = await context.supabase
+      .from("order_items")
+      .insert(data.items.map((i) => ({ ...i, order_id: order.id })));
     if (itemErr) throw new Error(itemErr.message);
     return { id: order.id };
   });

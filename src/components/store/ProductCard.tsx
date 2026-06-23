@@ -10,7 +10,14 @@ interface ProductCardProps {
   categoryName?: string;
 }
 
-export function ProductCard({ slug, name, price, comparePrice, image, categoryName }: ProductCardProps) {
+export function ProductCard({
+  slug,
+  name,
+  price,
+  comparePrice,
+  image,
+  categoryName,
+}: ProductCardProps) {
   return (
     <Link to="/product/$slug" params={{ slug }} className="group block">
       <div className="aspect-[4/5] bg-muted overflow-hidden">
@@ -45,7 +52,9 @@ export function ProductCard({ slug, name, price, comparePrice, image, categoryNa
   );
 }
 
-export function primaryImage(images?: Array<{ image_url: string; is_primary?: boolean | null; display_order?: number | null }>) {
+export function primaryImage(
+  images?: Array<{ image_url: string; is_primary?: boolean | null; display_order?: number | null }>,
+) {
   if (!images || images.length === 0) return null;
   const sorted = [...images].sort((a, b) => {
     if (a.is_primary && !b.is_primary) return -1;

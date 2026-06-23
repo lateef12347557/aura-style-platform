@@ -5,7 +5,10 @@ export const Route = createFileRoute("/shop/")({
   head: () => ({
     meta: [
       { title: "Shop — ATELIER" },
-      { name: "description", content: "Browse the entire ATELIER collection of shoes and ready-to-wear." },
+      {
+        name: "description",
+        content: "Browse the entire ATELIER collection of shoes and ready-to-wear.",
+      },
       { property: "og:title", content: "Shop — ATELIER" },
       { property: "og:url", content: "/shop" },
     ],

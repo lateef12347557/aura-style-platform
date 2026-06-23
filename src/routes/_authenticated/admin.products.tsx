@@ -2,9 +2,26 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
-import { Plus, Search, Filter, Copy, Trash2, CheckCircle, XCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Plus,
+  Search,
+  Filter,
+  Copy,
+  Trash2,
+  CheckCircle,
+  XCircle,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { AdminPage } from "@/components/admin/AdminShell";
-import { listAdminProducts, deleteProduct, getAdminProduct, upsertProduct, bulkUpdateStatus, bulkDeleteProducts } from "@/lib/products.functions";
+import {
+  listAdminProducts,
+  deleteProduct,
+  getAdminProduct,
+  upsertProduct,
+  bulkUpdateStatus,
+  bulkDeleteProducts,
+} from "@/lib/products.functions";
 import { listAllCategories } from "@/lib/categories.functions";
 import { formatPrice } from "@/lib/format";
 
@@ -16,10 +33,16 @@ const ITEMS_PER_PAGE = 10;
 
 function ProductsAdmin() {
   const qc = useQueryClient();
-  
+
   // Queries
-  const productsQuery = useQuery({ queryKey: ["admin-products"], queryFn: () => listAdminProducts() });
-  const categoriesQuery = useQuery({ queryKey: ["admin-cats"], queryFn: () => listAllCategories() });
+  const productsQuery = useQuery({
+    queryKey: ["admin-products"],
+    queryFn: () => listAdminProducts(),
+  });
+  const categoriesQuery = useQuery({
+    queryKey: ["admin-cats"],
+    queryFn: () => listAllCategories(),
+  });
 
   // Filters state
   const [search, setSearch] = useState("");
@@ -33,8 +56,9 @@ function ProductsAdmin() {
   // Filtering Logic
   const filtered = useMemo(() => {
     return (productsQuery.data ?? []).filter((p) => {
-      const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase()) || 
-                            (p.sku && p.sku.toLowerCase().includes(search.toLowerCase()));
+      const matchesSearch =
+        p.name.toLowerCase().includes(search.toLowerCase()) ||
+        (p.sku && p.sku.toLowerCase().includes(search.toLowerCase()));
       const matchesGender = selectedGender === "all" || p.category?.gender === selectedGender;
       const matchesCategory = selectedCategory === "all" || p.category?.name === selectedCategory;
       return matchesSearch && matchesGender && matchesCategory;
@@ -65,7 +89,7 @@ function ProductsAdmin() {
     try {
       const p = await getAdminProduct({ data: { id } });
       if (!p) throw new Error("Could not load original product");
-      
+
       const copyPayload = {
         name: `${p.name} (Copy)`,
         slug: `${p.slug}-copy-${Math.floor(Math.random() * 10000)}`,
@@ -137,7 +161,7 @@ function ProductsAdmin() {
 
   const toggleSelectRow = (id: string) => {
     setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
     );
   };
 
@@ -212,7 +236,9 @@ function ProductsAdmin() {
         {/* Bulk Action Toolbar */}
         {selectedIds.length > 0 && (
           <div className="bg-secondary border border-border px-4 py-1.5 flex items-center gap-3 text-xs">
-            <span className="font-semibold text-muted-foreground">{selectedIds.length} selected:</span>
+            <span className="font-semibold text-muted-foreground">
+              {selectedIds.length} selected:
+            </span>
             <button
               onClick={() => handleBulkActivate(true)}
               className="hover:text-accent font-medium flex items-center gap-1 uppercase tracking-wider"
@@ -245,7 +271,9 @@ function ProductsAdmin() {
                 <th className="p-3 w-10 text-center">
                   <input
                     type="checkbox"
-                    checked={paginatedData.length > 0 && selectedIds.length === paginatedData.length}
+                    checked={
+                      paginatedData.length > 0 && selectedIds.length === paginatedData.length
+                    }
                     onChange={toggleSelectAll}
                   />
                 </th>
@@ -272,10 +300,18 @@ function ProductsAdmin() {
                     </td>
                     <td className="p-3">
                       <div className="flex flex-col">
-                        <Link to="/admin/products/$id" params={{ id: p.id }} className="hover:text-accent font-medium">
+                        <Link
+                          to="/admin/products/$id"
+                          params={{ id: p.id }}
+                          className="hover:text-accent font-medium"
+                        >
                           {p.name}
                         </Link>
-                        {p.sku && <span className="text-[10px] text-muted-foreground font-mono">SKU: {p.sku}</span>}
+                        {p.sku && (
+                          <span className="text-[10px] text-muted-foreground font-mono">
+                            SKU: {p.sku}
+                          </span>
+                        )}
                       </div>
                     </td>
                     <td className="text-muted-foreground text-xs">{p.category?.name || "—"}</td>
@@ -284,14 +320,18 @@ function ProductsAdmin() {
                     </td>
                     <td className="text-right font-medium">{formatPrice(p.price)}</td>
                     <td className="text-right pr-2">
-                      <span className={p.stock_quantity === 0 ? "text-destructive font-semibold" : ""}>
+                      <span
+                        className={p.stock_quantity === 0 ? "text-destructive font-semibold" : ""}
+                      >
                         {p.stock_quantity}
                       </span>
                     </td>
                     <td className="text-center">
                       <span
                         className={`text-xs px-2 py-0.5 rounded-full ${
-                          p.is_active ? "bg-accent/15 text-accent" : "bg-muted text-muted-foreground"
+                          p.is_active
+                            ? "bg-accent/15 text-accent"
+                            : "bg-muted text-muted-foreground"
                         }`}
                       >
                         {p.is_active ? "Active" : "Draft"}
@@ -305,7 +345,11 @@ function ProductsAdmin() {
                       >
                         <Copy className="h-3.5 w-3.5" /> Duplicate
                       </button>
-                      <Link to="/admin/products/$id" params={{ id: p.id }} className="text-xs underline font-medium hover:text-accent">
+                      <Link
+                        to="/admin/products/$id"
+                        params={{ id: p.id }}
+                        className="text-xs underline font-medium hover:text-accent"
+                      >
                         Edit
                       </Link>
                       <button
@@ -332,7 +376,9 @@ function ProductsAdmin() {
           {totalPages > 1 && (
             <div className="flex items-center justify-between border-t border-border px-4 py-3 bg-muted/10 text-xs">
               <div className="text-muted-foreground">
-                Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, filtered.length)} of {filtered.length} entries
+                Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{" "}
+                {Math.min(currentPage * ITEMS_PER_PAGE, filtered.length)} of {filtered.length}{" "}
+                entries
               </div>
               <div className="flex items-center gap-2">
                 <button

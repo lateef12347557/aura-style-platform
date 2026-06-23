@@ -52,7 +52,20 @@ export function ShopGrid({
 
   // Fetch products with all filters applied
   const productsQuery = useQuery({
-    queryKey: ["products", { gender, type, sort, selectedSizes, selectedColors, minPrice, maxPrice, selectedCategory, searchQuery }],
+    queryKey: [
+      "products",
+      {
+        gender,
+        type,
+        sort,
+        selectedSizes,
+        selectedColors,
+        minPrice,
+        maxPrice,
+        selectedCategory,
+        searchQuery,
+      },
+    ],
     queryFn: () =>
       listProducts({
         data: {
@@ -76,7 +89,12 @@ export function ShopGrid({
         const next = { ...prev, ...newParams };
         // Clean up empty params
         Object.keys(next).forEach((key) => {
-          if (next[key] === undefined || next[key] === null || (Array.isArray(next[key]) && next[key].length === 0) || next[key] === "") {
+          if (
+            next[key] === undefined ||
+            next[key] === null ||
+            (Array.isArray(next[key]) && next[key].length === 0) ||
+            next[key] === ""
+          ) {
             delete next[key];
           }
         });
@@ -216,7 +234,9 @@ export function ShopGrid({
             type="number"
             placeholder="Min"
             value={minPrice ?? ""}
-            onChange={(e) => updateParams({ minPrice: e.target.value ? Number(e.target.value) : undefined })}
+            onChange={(e) =>
+              updateParams({ minPrice: e.target.value ? Number(e.target.value) : undefined })
+            }
             className="w-full bg-background border border-border px-3 py-2 text-xs focus:outline-none focus:border-accent"
           />
           <span className="text-muted-foreground text-xs">—</span>
@@ -224,7 +244,9 @@ export function ShopGrid({
             type="number"
             placeholder="Max"
             value={maxPrice ?? ""}
-            onChange={(e) => updateParams({ maxPrice: e.target.value ? Number(e.target.value) : undefined })}
+            onChange={(e) =>
+              updateParams({ maxPrice: e.target.value ? Number(e.target.value) : undefined })
+            }
             className="w-full bg-background border border-border px-3 py-2 text-xs focus:outline-none focus:border-accent"
           />
         </div>
@@ -258,7 +280,9 @@ export function ShopGrid({
           <SlidersHorizontal className="h-4 w-4" /> Filters
         </button>
         <div className="hidden lg:block text-xs text-muted-foreground">
-          {productsQuery.isLoading ? "Loading products..." : `${productsQuery.data?.length ?? 0} items`}
+          {productsQuery.isLoading
+            ? "Loading products..."
+            : `${productsQuery.data?.length ?? 0} items`}
         </div>
 
         <div className="flex items-center gap-3">
@@ -283,34 +307,56 @@ export function ShopGrid({
           {searchQuery && (
             <span className="inline-flex items-center gap-1 bg-secondary px-2.5 py-1 text-xs border border-border">
               Search: "{searchQuery}"
-              <button onClick={() => updateParams({ search: undefined })}><X className="h-3 w-3" /></button>
+              <button onClick={() => updateParams({ search: undefined })}>
+                <X className="h-3 w-3" />
+              </button>
             </span>
           )}
           {selectedCategory && (
             <span className="inline-flex items-center gap-1 bg-secondary px-2.5 py-1 text-xs border border-border">
               Cat: {selectedCategory}
-              <button onClick={() => updateParams({ category: undefined })}><X className="h-3 w-3" /></button>
+              <button onClick={() => updateParams({ category: undefined })}>
+                <X className="h-3 w-3" />
+              </button>
             </span>
           )}
           {selectedSizes.map((sz: string) => (
-            <span key={sz} className="inline-flex items-center gap-1 bg-secondary px-2.5 py-1 text-xs border border-border">
+            <span
+              key={sz}
+              className="inline-flex items-center gap-1 bg-secondary px-2.5 py-1 text-xs border border-border"
+            >
               Size: {sz}
-              <button onClick={() => toggleSize(sz)}><X className="h-3 w-3" /></button>
+              <button onClick={() => toggleSize(sz)}>
+                <X className="h-3 w-3" />
+              </button>
             </span>
           ))}
           {selectedColors.map((col: string) => (
-            <span key={col} className="inline-flex items-center gap-1 bg-secondary px-2.5 py-1 text-xs border border-border">
+            <span
+              key={col}
+              className="inline-flex items-center gap-1 bg-secondary px-2.5 py-1 text-xs border border-border"
+            >
               Color: {col}
-              <button onClick={() => toggleColor(col)}><X className="h-3 w-3" /></button>
+              <button onClick={() => toggleColor(col)}>
+                <X className="h-3 w-3" />
+              </button>
             </span>
           ))}
           {(minPrice !== undefined || maxPrice !== undefined) && (
             <span className="inline-flex items-center gap-1 bg-secondary px-2.5 py-1 text-xs border border-border">
-              Price: {minPrice !== undefined ? formatPrice(minPrice) : "$0"} – {maxPrice !== undefined ? formatPrice(maxPrice) : "∞"}
-              <button onClick={() => updateParams({ minPrice: undefined, maxPrice: undefined })}><X className="h-3 w-3" /></button>
+              Price: {minPrice !== undefined ? formatPrice(minPrice) : "$0"} –{" "}
+              {maxPrice !== undefined ? formatPrice(maxPrice) : "∞"}
+              <button onClick={() => updateParams({ minPrice: undefined, maxPrice: undefined })}>
+                <X className="h-3 w-3" />
+              </button>
             </span>
           )}
-          <button onClick={clearAllFilters} className="text-xs text-accent underline underline-offset-4 ml-2">Clear all</button>
+          <button
+            onClick={clearAllFilters}
+            className="text-xs text-accent underline underline-offset-4 ml-2"
+          >
+            Clear all
+          </button>
         </div>
       )}
 
@@ -335,8 +381,12 @@ export function ShopGrid({
             </div>
           ) : (productsQuery.data?.length ?? 0) === 0 ? (
             <div className="text-center py-28 bg-secondary border border-border">
-              <p className="text-sm text-muted-foreground font-display text-lg mb-2">No matching products</p>
-              <p className="text-xs text-muted-foreground max-w-xs mx-auto">Try loosening your filter settings or search query to find products.</p>
+              <p className="text-sm text-muted-foreground font-display text-lg mb-2">
+                No matching products
+              </p>
+              <p className="text-xs text-muted-foreground max-w-xs mx-auto">
+                Try loosening your filter settings or search query to find products.
+              </p>
               {hasActiveFilters && (
                 <button
                   onClick={clearAllFilters}
@@ -385,13 +435,14 @@ export function ShopGrid({
             >
               <div className="flex items-center justify-between pb-4 border-b border-border mb-6">
                 <span className="font-display text-xl">Filters</span>
-                <button onClick={() => setMobileFiltersOpen(false)} className="p-1 hover:bg-secondary rounded">
+                <button
+                  onClick={() => setMobileFiltersOpen(false)}
+                  className="p-1 hover:bg-secondary rounded"
+                >
                   <X className="h-5 w-5" />
                 </button>
               </div>
-              <div className="flex-1 overflow-y-auto pb-6">
-                {renderFilterSections()}
-              </div>
+              <div className="flex-1 overflow-y-auto pb-6">{renderFilterSections()}</div>
               <div className="pt-4 border-t border-border flex gap-3">
                 <button
                   onClick={() => setMobileFiltersOpen(false)}

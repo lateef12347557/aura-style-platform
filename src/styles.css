@@ -66,19 +66,19 @@
 :root {
   /* Premium editorial palette: ink black, warm off-white, olive accent */
   --radius: 0.25rem;
-  --background: oklch(0.972 0.008 80);          /* #F5F3EF warm off-white */
-  --foreground: oklch(0.18 0.01 80);            /* near-black ink */
+  --background: oklch(0.972 0.008 80); /* #F5F3EF warm off-white */
+  --foreground: oklch(0.18 0.01 80); /* near-black ink */
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.18 0.01 80);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.18 0.01 80);
-  --primary: oklch(0.18 0.01 80);               /* ink */
+  --primary: oklch(0.18 0.01 80); /* ink */
   --primary-foreground: oklch(0.98 0.005 80);
-  --secondary: oklch(0.93 0.008 80);            /* paper */
+  --secondary: oklch(0.93 0.008 80); /* paper */
   --secondary-foreground: oklch(0.18 0.01 80);
   --muted: oklch(0.93 0.008 80);
   --muted-foreground: oklch(0.45 0.008 80);
-  --accent: oklch(0.52 0.08 125);               /* olive #5C6B3A */
+  --accent: oklch(0.52 0.08 125); /* olive #5C6B3A */
   --accent-foreground: oklch(0.98 0.005 80);
   --destructive: oklch(0.55 0.2 28);
   --destructive-foreground: oklch(0.98 0.005 80);
@@ -147,7 +147,10 @@
     font-feature-settings: "ss01", "cv11";
   }
 
-  h1, h2, h3, .font-display {
+  h1,
+  h2,
+  h3,
+  .font-display {
     font-family: var(--font-serif);
     letter-spacing: -0.01em;
   }

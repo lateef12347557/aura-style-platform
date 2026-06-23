@@ -85,11 +85,7 @@ export function Header() {
       </div>
       {mobile && (
         <nav className="md:hidden border-t border-border/60 bg-background px-4 py-4 flex flex-col gap-3">
-          <Link
-            to="/shop"
-            className="text-sm py-1"
-            onClick={() => setMobile(false)}
-          >
+          <Link to="/shop" className="text-sm py-1" onClick={() => setMobile(false)}>
             Shop
           </Link>
           <Link

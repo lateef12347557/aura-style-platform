@@ -4,9 +4,7 @@ import { z } from "zod";
 import type { Database } from "@/integrations/supabase/types";
 
 export const subscribeNewsletter = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) =>
-    z.object({ email: z.string().email().max(254) }).parse(input),
-  )
+  .inputValidator((input: unknown) => z.object({ email: z.string().email().max(254) }).parse(input))
   .handler(async ({ data }) => {
     const sb = createClient<Database>(
       process.env.SUPABASE_URL!,

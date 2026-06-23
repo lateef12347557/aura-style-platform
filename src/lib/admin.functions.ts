@@ -11,12 +11,16 @@ export const getAdminOverview = createServerFn({ method: "GET" })
     });
     if (!adminCheck) throw new Error("Forbidden");
 
-    const [{ data: orders }, { count: productCount }, { count: customerCount }] =
-      await Promise.all([
+    const [{ data: orders }, { count: productCount }, { count: customerCount }] = await Promise.all(
+      [
         context.supabase.from("orders").select("id,total_amount,created_at,status,user_id"),
-        context.supabase.from("products").select("id", { count: "exact", head: true }).eq("is_active", true),
+        context.supabase
+          .from("products")
+          .select("id", { count: "exact", head: true })
+          .eq("is_active", true),
         context.supabase.from("profiles").select("id", { count: "exact", head: true }),
-      ]);
+      ],
+    );
 
     const all = orders ?? [];
     const totalRevenue = all
@@ -148,6 +152,6 @@ export const getAdminCustomer = createServerFn({ method: "GET" })
       metrics: {
         orderCount,
         totalSpent,
-      }
+      },
     };
-  });
+  });

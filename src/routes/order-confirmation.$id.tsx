@@ -3,7 +3,9 @@ import { StoreLayout } from "@/components/store/StoreLayout";
 import { Check } from "lucide-react";
 
 export const Route = createFileRoute("/order-confirmation/$id")({
-  head: () => ({ meta: [{ title: "Order confirmed — ATELIER" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({
+    meta: [{ title: "Order confirmed — ATELIER" }, { name: "robots", content: "noindex" }],
+  }),
   component: () => {
     const { id } = Route.useParams();
     return (
@@ -16,7 +18,12 @@ export const Route = createFileRoute("/order-confirmation/$id")({
           <h1 className="font-display text-3xl mb-3">Order placed</h1>
           <p className="text-muted-foreground mb-2">Confirmation #{id.slice(0, 8).toUpperCase()}</p>
           <p className="text-sm text-muted-foreground mb-8">We'll send you a note when it ships.</p>
-          <Link to="/account" className="inline-block bg-primary text-primary-foreground px-7 py-3 text-sm uppercase tracking-wider">View orders</Link>
+          <Link
+            to="/account"
+            className="inline-block bg-primary text-primary-foreground px-7 py-3 text-sm uppercase tracking-wider"
+          >
+            View orders
+          </Link>
         </div>
       </StoreLayout>
     );

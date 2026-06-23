@@ -41,16 +41,20 @@ ATELIER is a state-of-the-art, editorial-focused e-commerce storefront and admin
 ## Setup & Local Installation
 
 ### 1. Prerequisites
+
 Ensure you have [Bun](https://bun.sh) (recommended) or Node.js (v18+) installed.
 
 ### 2. Install Dependencies
+
 ```bash
 bun install
 # or npm install
 ```
 
 ### 3. Environment Configuration
+
 Create a `.env` file in the root directory (based on `.env.example`):
+
 ```env
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_PUBLISHABLE_KEY=eyJhbGciOiJIUz...
@@ -62,13 +66,17 @@ SUPABASE_PROJECT_ID=your-project-id
 ```
 
 ### 4. Database Setup & Seeding
+
 Deploy migrations to your Supabase project. You have two options to seed the database:
 
 #### Option A: Supabase SQL Editor (Recommended)
+
 Copy the contents of `supabase/seed.sql` and paste them into a new query run inside the **SQL Editor** tab of the Supabase dashboard.
 
 #### Option B: CLI Seeding Command
+
 Ensure your `.env` contains the required keys (use your `SUPABASE_SERVICE_ROLE_KEY` if you want to seed with RLS bypassed) and execute:
+
 ```bash
 bun run db:seed
 ```
@@ -78,6 +86,7 @@ bun run db:seed
 ## Running Development Server
 
 Start the local development server:
+
 ```bash
 bun run dev
 # or npm run dev
@@ -90,6 +99,7 @@ The application will run locally at [http://localhost:3000](http://localhost:300
 ## Key Features Built & Configured
 
 ### Storefront Features
+
 - **Editorial Hero Section:** Homepage contains generous whitespace, high-resolution lifestyle images, brand values sections, and interactive custom grids.
 - **Advanced Filtering Grid:** The `/shop` subroutes map category, search query, sizing, color swatches, and price ranges to URL search parameters for absolute shareability.
 - **Product Gallery Zoom:** Custom mouse coordinates calculate micro-adjustments for smooth zoom-on-hover card presentation.
@@ -97,6 +107,7 @@ The application will run locally at [http://localhost:3000](http://localhost:300
 - **Zustand Cart & Wishlist Drawer:** Full persistent side drawer checkout sync with instant updates.
 
 ### Admin Dashboard (`/admin/*`)
+
 - **KPI Summary Overview:** Real-time revenue charts (via Recharts Area diagrams), total customer spend tallies, and active orders dashboard.
 - **Visual Category Tree:** Admin categories view maps parent categories to infinite children levels in indented trees.
 - **Advanced Products Catalog Table:** Multi-selection row controls, bulk deletion/status toggle, product cloning, and paginated searches.

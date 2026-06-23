@@ -79,10 +79,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "ATELIER — Premium shoes & clothing" },
-      { name: "description", content: "Editorial fashion. Hand-finished shoes and ready-to-wear for men and women." },
+      {
+        name: "description",
+        content: "Editorial fashion. Hand-finished shoes and ready-to-wear for men and women.",
+      },
       { name: "author", content: "ATELIER" },
       { property: "og:title", content: "ATELIER" },
-      { property: "og:description", content: "Editorial fashion. Hand-finished shoes and ready-to-wear." },
+      {
+        property: "og:description",
+        content: "Editorial fashion. Hand-finished shoes and ready-to-wear.",
+      },
       { property: "og:site_name", content: "ATELIER" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

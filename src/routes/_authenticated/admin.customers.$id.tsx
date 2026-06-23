@@ -21,7 +21,9 @@ function CustomerDetail() {
     return (
       <AdminPage title="Customer Profile" eyebrow="Customer Details">
         <div className="space-y-6">
-          <Link to="/admin/customers" className="text-xs underline">← All customers</Link>
+          <Link to="/admin/customers" className="text-xs underline">
+            ← All customers
+          </Link>
           <div className="bg-card border border-border p-6 animate-pulse">
             <div className="h-8 bg-muted rounded w-1/4 mb-4"></div>
             <div className="h-4 bg-muted rounded w-1/3"></div>
@@ -35,7 +37,9 @@ function CustomerDetail() {
     return (
       <AdminPage title="Error" eyebrow="Customer Details">
         <div className="space-y-4">
-          <Link to="/admin/customers" className="text-xs underline">← All customers</Link>
+          <Link to="/admin/customers" className="text-xs underline">
+            ← All customers
+          </Link>
           <p className="text-sm text-destructive">
             {error instanceof Error ? error.message : "Failed to load customer profile"}
           </p>
@@ -50,20 +54,28 @@ function CustomerDetail() {
   return (
     <AdminPage title={profile.full_name ?? "Customer Profile"} eyebrow="Customer Details">
       <div className="space-y-6">
-        <Link to="/admin/customers" className="text-xs underline">← All customers</Link>
+        <Link to="/admin/customers" className="text-xs underline">
+          ← All customers
+        </Link>
 
         {/* Profile Card */}
         <div className="bg-card border border-border p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-center gap-4">
             <div className="h-16 w-16 bg-muted border border-border flex items-center justify-center rounded-sm overflow-hidden">
               {profile.avatar_url ? (
-                <img src={profile.avatar_url} alt={profile.full_name ?? ""} className="h-full w-full object-cover" />
+                <img
+                  src={profile.avatar_url}
+                  alt={profile.full_name ?? ""}
+                  className="h-full w-full object-cover"
+                />
               ) : (
                 <User className="h-8 w-8 text-muted-foreground" />
               )}
             </div>
             <div>
-              <h2 className="font-display text-xl mb-1">{profile.full_name ?? "Anonymous Customer"}</h2>
+              <h2 className="font-display text-xl mb-1">
+                {profile.full_name ?? "Anonymous Customer"}
+              </h2>
               <div className="flex flex-col gap-1 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1.5">
                   <Mail className="h-3.5 w-3.5 text-muted-foreground" />
@@ -102,7 +114,9 @@ function CustomerDetail() {
 
           <div className="bg-card border border-border p-5 flex items-center justify-between">
             <div>
-              <div className="editorial-eyebrow text-muted-foreground text-xs">Average order value</div>
+              <div className="editorial-eyebrow text-muted-foreground text-xs">
+                Average order value
+              </div>
               <div className="font-display text-2xl mt-1.5">{formatPrice(avgOrderValue)}</div>
             </div>
             <div className="p-3 bg-secondary rounded-sm">
@@ -115,7 +129,9 @@ function CustomerDetail() {
         <div className="bg-card border border-border p-6">
           <div className="editorial-eyebrow text-muted-foreground mb-4">Order History</div>
           {orders.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-4 text-center">No orders from this customer yet.</p>
+            <p className="text-sm text-muted-foreground py-4 text-center">
+              No orders from this customer yet.
+            </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -131,7 +147,11 @@ function CustomerDetail() {
                   {orders.map((o) => (
                     <tr key={o.id} className="hover:bg-muted/30">
                       <td className="py-3 font-medium">
-                        <Link to="/admin/orders/$id" params={{ id: o.id }} className="hover:text-accent underline decoration-dotted">
+                        <Link
+                          to="/admin/orders/$id"
+                          params={{ id: o.id }}
+                          className="hover:text-accent underline decoration-dotted"
+                        >
                           #{o.id.slice(0, 8).toUpperCase()}
                         </Link>
                       </td>

@@ -7,7 +7,10 @@ export const Route = createFileRoute("/shop/$gender/")({
     return {
       meta: [
         { title: `${label} — ATELIER` },
-        { name: "description", content: `${label}'s collection: hand-finished shoes and ready-to-wear.` },
+        {
+          name: "description",
+          content: `${label}'s collection: hand-finished shoes and ready-to-wear.`,
+        },
         { property: "og:title", content: `${label} — ATELIER` },
         { property: "og:url", content: `/shop/${params.gender}` },
       ],

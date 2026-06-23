@@ -4,7 +4,11 @@ import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import { slugify } from "@/lib/utils";
 import { AdminPage } from "@/components/admin/AdminShell";
-import { listAllCategories, upsertCategory, toggleCategoryActive } from "@/lib/categories.functions";
+import {
+  listAllCategories,
+  upsertCategory,
+  toggleCategoryActive,
+} from "@/lib/categories.functions";
 import { ChevronRight, Folder, FolderOpen, Edit, Trash2, Eye, EyeOff, Upload } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -26,8 +30,11 @@ interface Category {
 
 function CategoriesAdmin() {
   const qc = useQueryClient();
-  const { data, isLoading } = useQuery({ queryKey: ["admin-cats"], queryFn: () => listAllCategories() });
-  
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin-cats"],
+    queryFn: () => listAllCategories(),
+  });
+
   const [editing, setEditing] = useState<{
     id?: string;
     name: string;
@@ -92,8 +99,13 @@ function CategoriesAdmin() {
     const children = childrenMap.get(c.id) || [];
     return (
       <div key={c.id} className="w-full">
-        <div className={`flex items-center justify-between py-3 px-4 hover:bg-muted/40 border-b border-border transition-colors ${depth > 0 ? "bg-background/50" : "bg-card"}`}>
-          <div className="flex items-center gap-2 flex-1" style={{ paddingLeft: `${depth * 24}px` }}>
+        <div
+          className={`flex items-center justify-between py-3 px-4 hover:bg-muted/40 border-b border-border transition-colors ${depth > 0 ? "bg-background/50" : "bg-card"}`}
+        >
+          <div
+            className="flex items-center gap-2 flex-1"
+            style={{ paddingLeft: `${depth * 24}px` }}
+          >
             {depth > 0 ? (
               <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
             ) : (
@@ -104,12 +116,18 @@ function CategoriesAdmin() {
               <span className="text-[10px] text-muted-foreground">slug: {c.slug}</span>
             </div>
             {c.image_url && (
-              <img src={c.image_url} alt="" className="h-6 w-6 rounded object-cover ml-2 border border-border" />
+              <img
+                src={c.image_url}
+                alt=""
+                className="h-6 w-6 rounded object-cover ml-2 border border-border"
+              />
             )}
           </div>
-          
+
           <div className="flex items-center gap-8 text-xs text-muted-foreground">
-            <span className="w-16 uppercase tracking-wider text-[10px] text-center">{c.gender}</span>
+            <span className="w-16 uppercase tracking-wider text-[10px] text-center">
+              {c.gender}
+            </span>
             <span className="w-16 uppercase tracking-wider text-[10px] text-center">{c.type}</span>
             <div className="w-20 text-center flex items-center justify-center">
               <button
@@ -118,13 +136,17 @@ function CategoriesAdmin() {
                 title={c.is_active ? "Deactivate" : "Activate"}
               >
                 {c.is_active ? (
-                  <span className="inline-flex items-center gap-1 text-accent font-medium text-[10px] uppercase"><Eye className="h-3.5 w-3.5" /> Active</span>
+                  <span className="inline-flex items-center gap-1 text-accent font-medium text-[10px] uppercase">
+                    <Eye className="h-3.5 w-3.5" /> Active
+                  </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 text-muted-foreground text-[10px] uppercase"><EyeOff className="h-3.5 w-3.5" /> Draft</span>
+                  <span className="inline-flex items-center gap-1 text-muted-foreground text-[10px] uppercase">
+                    <EyeOff className="h-3.5 w-3.5" /> Draft
+                  </span>
                 )}
               </button>
             </div>
-            
+
             <div className="w-20 flex justify-end gap-3 pr-2">
               <button
                 onClick={() =>
@@ -164,7 +186,17 @@ function CategoriesAdmin() {
       eyebrow="Catalog"
       actions={
         <button
-          onClick={() => setEditing({ name: "", slug: "", gender: "unisex", type: "clothing", parent_id: null, image_url: "", is_active: true })}
+          onClick={() =>
+            setEditing({
+              name: "",
+              slug: "",
+              gender: "unisex",
+              type: "clothing",
+              parent_id: null,
+              image_url: "",
+              is_active: true,
+            })
+          }
           className="bg-primary text-primary-foreground px-4 py-2 text-sm uppercase tracking-wider font-medium hover:bg-accent transition-colors"
         >
           + Add Category
@@ -185,12 +217,14 @@ function CategoriesAdmin() {
               <span className="w-20 text-right pr-4">Actions</span>
             </div>
           </div>
-          
+
           {/* Tree Rows */}
           <div className="divide-y divide-border/40">
             {roots.map((root) => renderCategoryRow(root))}
             {roots.length === 0 && (
-              <div className="py-12 text-center text-sm text-muted-foreground">No categories found. Create a category to get started.</div>
+              <div className="py-12 text-center text-sm text-muted-foreground">
+                No categories found. Create a category to get started.
+              </div>
             )}
           </div>
         </div>
@@ -198,24 +232,55 @@ function CategoriesAdmin() {
 
       {/* Editing Dialog Modal */}
       {editing && (
-        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4 animate-fade-in" onClick={() => setEditing(null)}>
+        <div
+          className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4 animate-fade-in"
+          onClick={() => setEditing(null)}
+        >
           <div
             onClick={(e) => e.stopPropagation()}
             className="bg-background border border-border w-full max-w-md p-6 space-y-4 shadow-2xl relative"
           >
-            <h2 className="font-display text-2xl mb-4">{editing.id ? "Edit category" : "New category"}</h2>
-            
-            <Input label="Name" value={editing.name} onChange={(v) => setEditing({ ...editing, name: v, slug: editing.slug || slugify(v, { lower: true, strict: true }) })} />
-            <Input label="Slug" value={editing.slug} onChange={(v) => setEditing({ ...editing, slug: v })} />
-            
+            <h2 className="font-display text-2xl mb-4">
+              {editing.id ? "Edit category" : "New category"}
+            </h2>
+
+            <Input
+              label="Name"
+              value={editing.name}
+              onChange={(v) =>
+                setEditing({
+                  ...editing,
+                  name: v,
+                  slug: editing.slug || slugify(v, { lower: true, strict: true }),
+                })
+              }
+            />
+            <Input
+              label="Slug"
+              value={editing.slug}
+              onChange={(v) => setEditing({ ...editing, slug: v })}
+            />
+
             <div className="grid grid-cols-2 gap-3">
-              <Select label="Gender" value={editing.gender} options={["male", "female", "unisex"]} onChange={(v) => setEditing({ ...editing, gender: v as any })} />
-              <Select label="Type" value={editing.type} options={["shoes", "clothing"]} onChange={(v) => setEditing({ ...editing, type: v as any })} />
+              <Select
+                label="Gender"
+                value={editing.gender}
+                options={["male", "female", "unisex"]}
+                onChange={(v) => setEditing({ ...editing, gender: v as any })}
+              />
+              <Select
+                label="Type"
+                value={editing.type}
+                options={["shoes", "clothing"]}
+                onChange={(v) => setEditing({ ...editing, type: v as any })}
+              />
             </div>
 
             {/* Parent Category Option Selection */}
             <div>
-              <label className="editorial-eyebrow text-muted-foreground text-xs">Parent Category (Optional)</label>
+              <label className="editorial-eyebrow text-muted-foreground text-xs">
+                Parent Category (Optional)
+              </label>
               <select
                 value={editing.parent_id || ""}
                 onChange={(e) => setEditing({ ...editing, parent_id: e.target.value || null })}
@@ -233,7 +298,9 @@ function CategoriesAdmin() {
             </div>
 
             <div>
-              <label className="editorial-eyebrow text-muted-foreground text-xs">Category Image</label>
+              <label className="editorial-eyebrow text-muted-foreground text-xs">
+                Category Image
+              </label>
               <div className="flex gap-2 items-center mt-1">
                 <input
                   type="text"
@@ -257,33 +324,39 @@ function CategoriesAdmin() {
                         const fileExt = file.name.split(".").pop();
                         const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
                         const filePath = `categories/${fileName}`;
-                        
+
                         const { error: uploadError } = await supabase.storage
                           .from("images")
                           .upload(filePath, file);
 
                         if (uploadError) throw uploadError;
 
-                        const { data } = supabase.storage
-                          .from("images")
-                          .getPublicUrl(filePath);
+                        const { data } = supabase.storage.from("images").getPublicUrl(filePath);
 
                         setEditing({ ...editing, image_url: data.publicUrl });
                         toast.success("Image uploaded successfully", { id: toastId });
                       } catch (err) {
-                        toast.error(err instanceof Error ? err.message : "Upload failed", { id: toastId });
+                        toast.error(err instanceof Error ? err.message : "Upload failed", {
+                          id: toastId,
+                        });
                       }
                     }}
                   />
                 </label>
               </div>
             </div>
-            
+
             <div className="flex gap-2 justify-end pt-4 border-t border-border mt-6">
-              <button onClick={() => setEditing(null)} className="px-4 py-2 text-sm uppercase tracking-wider hover:bg-secondary transition-colors">
+              <button
+                onClick={() => setEditing(null)}
+                className="px-4 py-2 text-sm uppercase tracking-wider hover:bg-secondary transition-colors"
+              >
                 Cancel
               </button>
-              <button onClick={save} className="bg-primary text-primary-foreground px-6 py-2 text-sm uppercase tracking-wider font-semibold hover:bg-accent transition-colors">
+              <button
+                onClick={save}
+                className="bg-primary text-primary-foreground px-6 py-2 text-sm uppercase tracking-wider font-semibold hover:bg-accent transition-colors"
+              >
                 Save
               </button>
             </div>
@@ -294,20 +367,46 @@ function CategoriesAdmin() {
   );
 }
 
-function Input({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+function Input({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
   return (
     <div>
       <label className="editorial-eyebrow text-muted-foreground text-xs">{label}</label>
-      <input value={value} onChange={(e) => onChange(e.target.value)} className="w-full mt-1 border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:border-accent" />
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full mt-1 border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:border-accent"
+      />
     </div>
   );
 }
 
-function Select({ label, value, options, onChange }: { label: string; value: string; options: string[]; onChange: (v: string) => void }) {
+function Select({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: string[];
+  onChange: (v: string) => void;
+}) {
   return (
     <div>
       <label className="editorial-eyebrow text-muted-foreground text-xs">{label}</label>
-      <select value={value} onChange={(e) => onChange(e.target.value)} className="w-full mt-1 border border-border bg-background px-3 py-2 text-sm uppercase tracking-wider focus:outline-none focus:border-accent">
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full mt-1 border border-border bg-background px-3 py-2 text-sm uppercase tracking-wider focus:outline-none focus:border-accent"
+      >
         {options.map((o) => (
           <option key={o} value={o}>
             {o}

@@ -30,9 +30,7 @@ export const useCart = create<CartState>()(
       add: (item) =>
         set((s) => {
           const k = keyOf(item.productId, item.variantId);
-          const existing = s.items.find(
-            (i) => keyOf(i.productId, i.variantId) === k,
-          );
+          const existing = s.items.find((i) => keyOf(i.productId, i.variantId) === k);
           if (existing) {
             return {
               items: s.items.map((i) =>
@@ -46,18 +44,15 @@ export const useCart = create<CartState>()(
         }),
       remove: (p, v) =>
         set((s) => ({
-          items: s.items.filter(
-            (i) => keyOf(i.productId, i.variantId) !== keyOf(p, v),
-          ),
+          items: s.items.filter((i) => keyOf(i.productId, i.variantId) !== keyOf(p, v)),
         })),
       setQty: (p, v, qty) =>
         set((s) => ({
-          items: s.items
-            .map((i) =>
-              keyOf(i.productId, i.variantId) === keyOf(p, v)
-                ? { ...i, quantity: Math.max(1, qty) }
-                : i,
-            ),
+          items: s.items.map((i) =>
+            keyOf(i.productId, i.variantId) === keyOf(p, v)
+              ? { ...i, quantity: Math.max(1, qty) }
+              : i,
+          ),
         })),
       clear: () => set({ items: [] }),
     }),
@@ -67,5 +62,4 @@ export const useCart = create<CartState>()(
 
 export const cartTotal = (items: CartItem[]) =>
   items.reduce((sum, i) => sum + i.price * i.quantity, 0);
-export const cartCount = (items: CartItem[]) =>
-  items.reduce((sum, i) => sum + i.quantity, 0);
+export const cartCount = (items: CartItem[]) => items.reduce((sum, i) => sum + i.quantity, 0);

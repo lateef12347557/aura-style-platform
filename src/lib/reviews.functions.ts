@@ -14,10 +14,12 @@ export const submitReview = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase.from("reviews").upsert(
-      { ...data, user_id: context.userId, is_approved: true },
-      { onConflict: "product_id,user_id" },
-    );
+    const { error } = await context.supabase
+      .from("reviews")
+      .upsert(
+        { ...data, user_id: context.userId, is_approved: true },
+        { onConflict: "product_id,user_id" },
+      );
     if (error) throw new Error(error.message);
     return { ok: true };
   });
